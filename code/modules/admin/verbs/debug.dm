@@ -70,11 +70,22 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 	var/procname = input("Proc path, eg: /proc/fake_blood","Path:", null) as text|null
 	if(!procname)
 		return
-	if(targetselected && !hascall(target,procname))
-		usr << "<font color='red'>Error: callproc(): target has no such call [procname].</font>"
+	
+	//strip away everything but the proc name
+	var/list/proclist = splittext(procname, "/")
+	if (!length(proclist))
+		return
+	procname = proclist[proclist.len]
+	
+	var/proctype = "proc"
+	if ("verb" in proclist)
+		proctype = "verb"
+	
+	if(targetselected && !hascall(target, procname))
+		usr << "<font color='red'>Error: callproc(): type [target.type] has no [proctype] named [procname].</font>")
 		return
 	else
-		var/procpath = text2path(procname)
+		var/procpath = text2path("[proctype]/[procname]")
 		if (!procpath)
 			usr << "<font color='red'>Error: callproc(): proc [procname] does not exist. (Did you forget the /proc/ part?)</font>"
 			return
