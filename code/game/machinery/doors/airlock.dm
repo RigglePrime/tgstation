@@ -1032,12 +1032,14 @@
 		if(I.use_tool(src, user, 40, volume=100))
 			deconstruct(TRUE, user)
 			return
-	else if(hasPower())
+	if(hasPower())
 		to_chat(user, "<span class='warning'>The airlock's motors resist your efforts to force it!</span>")
-	else if(locked)
+		return
+	if(locked)
 		to_chat(user, "<span class='warning'>The airlock's bolts prevent it from being forced!</span>")
-	else if( !welded && !operating)
-		if(!beingcrowbarred) //being fireaxe'd
+		return
+	if( !welded && !operating)
+		if(istype(I, /obj/item/twohanded/fireaxe)) //being fireaxe'd
 			var/obj/item/twohanded/fireaxe/F = I
 			if(F.wielded)
 				INVOKE_ASYNC(src, (density ? .proc/open : .proc/close), 2)
