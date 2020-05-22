@@ -55,7 +55,7 @@
 
 	if(AH)
 		message_admins("[key_name_admin(src)] has started replying to [key_name_admin(C, 0, 0)]'s admin help.")
-	var/msg = input(src,"Message:", "Private message to [key_name(C, 0, 0)]") as message|null
+	var/msg = stripped_multiline_input(src,"Message:", "Private message to [C.holder?.fakekey ? "an Administrator" : key_name(C, 0, 0)].")
 	if (!msg)
 		message_admins("[key_name_admin(src)] has cancelled their reply to [key_name_admin(C, 0, 0)]'s admin help.")
 		return
@@ -90,7 +90,7 @@
 		if(!ircreplyamount)	//to prevent people from spamming irc
 			return
 		if(!msg)
-			msg = input(src,"Message:", "Private message to Administrator") as message|null
+			msg = stripped_multiline_input(src,"Message:", "Private message to Administrator")
 
 		if(!msg)
 			return
@@ -112,7 +112,7 @@
 
 		//get message text, limit it's length.and clean/escape html
 		if(!msg)
-			msg = input(src,"Message:", "Private message to [key_name(recipient, 0, 0)]") as message|null
+			msg = stripped_multiline_input(src,"Message:", "Private message to [recipient.holder?.fakekey ? "an Administrator" : key_name(recipient, 0, 0)].")
 			msg = trim(msg)
 			if(!msg)
 				return
@@ -213,9 +213,17 @@
 		//we don't use message_admins here because the sender/receiver might get it too
 		for(var/client/X in GLOB.admins)
 			if(X.key!=key && X.key!=recipient.key)	//check client/X is an admin and isn't the sender or recipient
-				to_chat(X, "<font color='blue'><B>PM: [key_name(src, X, 0)]-&gt;[key_name(recipient, X, 0)]:</B> [keywordparsedmsg]</font>" )
+				to_chat(X, "<span class='notice'><B>PM: [key_name(src, X, 0)]-&gt;[key_name(recipient, X, 0)]:</B> [keywordparsedmsg]</span>" , confidential = TRUE)
 
-
+/client/proc/popup_admin_pm(client/recipient, msg)
+	var/sender = src
+	var/sendername = key
+	var/reply = stripped_multiline_input(recipient, msg,"Admin PM from-[sendername]", "")	//show message and await a reply
+	if(recipient && reply)
+		if(sender)
+			recipient.cmd_admin_pm(sender,reply)										//sender is still about, let's reply to them
+		else
+			adminhelp(reply)													//sender has left, adminhelp instead
 
 #define IRC_AHELP_USAGE "Usage: ticket <close|resolve|icissue|reject|reopen \[ticket #\]|list>"
 /proc/IrcPm(target,msg,sender)
