@@ -45,9 +45,10 @@
 
 	toggle_reel_spin(0)
 
-	for(var/cointype in typesof(/obj/item/coin))
-		var/obj/item/coin/C = cointype
-		coinvalues["[cointype]"] = initial(C.value)
+	for(cointype in typesof(/obj/item/coin))
+		var/obj/item/coin/C = new cointype
+		coinvalues["[cointype]"] = C.get_item_credit_value()
+		qdel(C) //Sigh
 
 /obj/machinery/computer/slot_machine/Destroy()
 	if(balance)
@@ -295,7 +296,8 @@
 /obj/machinery/computer/slot_machine/proc/dispense(amount = 0, cointype = /obj/item/coin/silver, mob/living/target, throwit = 0)
 	var/value = coinvalues["[cointype]"]
 
-
+	if(value <= 0)
+		CRASH("Coin value of zero, refusing to payout in dispenser")
 	while(amount >= value)
 		var/obj/item/coin/C = new cointype(loc) //DOUBLE THE PAIN
 		amount -= value
