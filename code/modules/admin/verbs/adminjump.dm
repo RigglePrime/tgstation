@@ -15,14 +15,15 @@
 			continue
 		turfs.Add(T)
 
-	var/turf/T = safepick(turfs)
-	if(!T)
-		to_chat(src, "Nowhere to jump to!")
+	if(length(turfs))
+		var/turf/T = pick(turfs)
+		usr.forceMove(T)
+		log_admin("[key_name(usr)] jumped to [AREACOORD(T)]")
+		message_admins("[key_name_admin(usr)] jumped to [AREACOORD(T)]")
+		SSblackbox.record_feedback("tally", "admin_verb", 1, "Jump To Area") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
+	else
+		to_chat(src, "Nowhere to jump to!", confidential = TRUE)
 		return
-	usr.forceMove(T)
-	log_admin("[key_name(usr)] jumped to [AREACOORD(A)]")
-	message_admins("[key_name_admin(usr)] jumped to [AREACOORD(A)]")
-	SSblackbox.record_feedback("tally", "admin_verb", 1, "Jump To Area") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 
 /client/proc/jumptoturf(turf/T in world)
 	set name = "Jump to Turf"
@@ -148,8 +149,8 @@
 	if(A && istype(A))
 		if(M.forceMove(safepick(get_area_turfs(A))))
 
-			log_admin("[key_name(usr)] teleported [key_name(M)] to [AREACOORD(A)]")
-			var/msg = "[key_name_admin(usr)] teleported [ADMIN_LOOKUPFLW(M)] to [AREACOORD(A)]"
+			log_admin("[key_name(usr)] teleported [key_name(M)] to [AREACOORD(M)]")
+			var/msg = "[key_name_admin(usr)] teleported [ADMIN_LOOKUPFLW(M)] to [AREACOORD(M)]"
 			message_admins(msg)
 			admin_ticket_log(M, msg)
 		else
