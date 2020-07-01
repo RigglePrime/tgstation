@@ -268,11 +268,33 @@
 			to_chat(M, "<span class='warning'>You need to unbuckle [src] first to do that!")
 			return
 		M.visible_message("<span class='notice'>[M] shakes [src] trying to get [p_them()] up!</span>", \
-						"<span class='notice'>You shake [src] trying to get [p_them()] up!</span>")
+						null, "<span class='hear'>You hear the rustling of clothes.</span>", DEFAULT_MESSAGE_RANGE, list(M, src))
+		to_chat(M, "<span class='notice'>You shake [src] trying to pick [p_them()] up!</span>")
+		to_chat(src, "<span class='notice'>[M] shakes you to get you up!</span>")
 	else
 		M.visible_message("<span class='notice'>[M] hugs [src] to make [p_them()] feel better!</span>", \
-					"<span class='notice'>You hug [src] to make [p_them()] feel better!</span>")
-		SEND_SIGNAL(src, COMSIG_ADD_MOOD_EVENT, "hug", /datum/mood_event/hug)
+					null, "<span class='hear'>You hear the rustling of clothes.</span>", DEFAULT_MESSAGE_RANGE, list(M, src))
+		to_chat(M, "<span class='notice'>You hug [src] to make [p_them()] feel better!</span>")
+		to_chat(src, "<span class='notice'>[M] hugs you to make you feel better!</span>")
+
+		// Warm them up with hugs
+		share_bodytemperature(M)
+		if(bodytemperature > M.bodytemperature)
+			SEND_SIGNAL(M, COMSIG_ADD_MOOD_EVENT, "hug", /datum/mood_event/warmhug, src) // Hugger got a warm hug
+			SEND_SIGNAL(src, COMSIG_ADD_MOOD_EVENT, "hug", /datum/mood_event/hug) // Reciver always gets a mood for being hugged
+		else
+			SEND_SIGNAL(src, COMSIG_ADD_MOOD_EVENT, "hug", /datum/mood_event/warmhug, M) // You got a warm hug
+
+		// Let people know if they hugged someone really warm or really cold
+		if(M.bodytemperature > BODYTEMP_HEAT_DAMAGE_LIMIT)
+			to_chat(src, "<span class='warning'>It feels like [M] is over heating as they hug you.</span>")
+		else if(M.bodytemperature < BODYTEMP_COLD_DAMAGE_LIMIT)
+			to_chat(src, "<span class='warning'>It feels like [M] is freezing as they hug you.</span>")
+
+		if(bodytemperature > BODYTEMP_HEAT_DAMAGE_LIMIT)
+			to_chat(M, "<span class='warning'>It feels like [src] is over heating as you hug them.</span>")
+		else if(bodytemperature < BODYTEMP_COLD_DAMAGE_LIMIT)
+			to_chat(M, "<span class='warning'>It feels like [src] is freezing as you hug them.</span>")
 	AdjustStun(-60)
 	AdjustKnockdown(-60)
 	AdjustUnconscious(-60)
