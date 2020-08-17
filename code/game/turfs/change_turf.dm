@@ -135,14 +135,14 @@ GLOBAL_LIST_INIT(blacklisted_automated_baseturfs, typecacheof(list(
 
 	return W
 
-/turf/open/ChangeTurf(path, list/new_baseturfs, flags)
+/turf/open/ChangeTurf(path, list/new_baseturfs, flags) //Resist the temptation to make this default to keeping air.
+	SSair.remove_from_active(src) //Turfs are fucking weird with refs, let's be safe yeah?
 	if ((flags & CHANGETURF_INHERIT_AIR) && ispath(path, /turf/open))
-		SSair.remove_from_active(src)
-		var/stashed_air = air
-		air = null // so that it doesn't get deleted
-		. = ..()
-		if (!. || . == src) // changeturf failed or didn't do anything
-			air = stashed_air
+		var/datum/gas_mixture/stashed_air = new()
+		stashed_air.copy_from(air)
+		. = ..() //If path == type this will return us, don't bank on making a new type
+		if (!.) // changeturf failed or didn't do anything
+			QDEL_NULL(stashed_air)
 			return
 		var/turf/open/newTurf = .
 		if (!istype(newTurf.air, /datum/gas_mixture/immutable/space))
