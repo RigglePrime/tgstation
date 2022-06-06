@@ -2493,6 +2493,7 @@
 #include "code\modules\research\nanites\nanite_programs\suppression.dm"
 #include "code\modules\research\nanites\nanite_programs\utility.dm"
 #include "code\modules\research\nanites\nanite_programs\weapon.dm"
+#include "code\modules\research\nanites\extra_settings\text.dm"
 #include "code\modules\research\techweb\__techweb_helpers.dm"
 #include "code\modules\research\techweb\_techweb.dm"
 #include "code\modules\research\techweb\_techweb_node.dm"
