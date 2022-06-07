@@ -97,6 +97,7 @@
 /obj/machinery/mineral/mint/proc/create_coins(P)
 	var/turf/T = get_step(src,output_dir)
 	if(T)
+		var/obj/item/storage/bag/money/bag_to_use = locate(/obj/item/storage/bag/money, T)
 		var/obj/item/O = new /obj/item/coin(src)
 		O.set_custom_materials(temp_list)
 		if(QDELETED(bag_to_use) || (bag_to_use.loc != T) || !SEND_SIGNAL(bag_to_use, COMSIG_TRY_STORAGE_INSERT, O, null, TRUE)) //important to send the signal so we don't overfill the bag.
