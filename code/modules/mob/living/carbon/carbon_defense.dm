@@ -279,11 +279,7 @@
 
 		// Warm them up with hugs
 		share_bodytemperature(M)
-		if(bodytemperature > M.bodytemperature)
-			SEND_SIGNAL(M, COMSIG_ADD_MOOD_EVENT, "hug", /datum/mood_event/warmhug, src) // Hugger got a warm hug
-			SEND_SIGNAL(src, COMSIG_ADD_MOOD_EVENT, "hug", /datum/mood_event/hug) // Reciver always gets a mood for being hugged
-		else
-			SEND_SIGNAL(src, COMSIG_ADD_MOOD_EVENT, "hug", /datum/mood_event/warmhug, M) // You got a warm hug
+		SEND_SIGNAL(src, COMSIG_ADD_MOOD_EVENT, "hug", /datum/mood_event/hug)
 
 		// Let people know if they hugged someone really warm or really cold
 		if(M.bodytemperature > BODYTEMP_HEAT_DAMAGE_LIMIT)
