@@ -271,7 +271,7 @@
 			info = pressed_pda.notehtml
 
 		itemname = sanitize(itemname)
-		to_chat(user, span_notice("You hold \the [itemname] up to the camera..."))
+		to_chat(user, "<span class='notice'>You hold \the [itemname] up to the camera...</span>")
 		user.log_talk(itemname, LOG_GAME, log_globally=TRUE, tag="Pressed to camera")
 		user.changeNext_move(CLICK_CD_MELEE)
 
