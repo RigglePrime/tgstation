@@ -615,9 +615,9 @@
 				to_chat(H, "<span class='notice'>You start channeling some power through the [fitting] into your body.</span>")
 				if(do_after(user, 50, target = src))
 					to_chat(H, "<span class='notice'>You receive some charge from the [fitting].</span>")
-					var/species/ethereal/e = H.dna?.species // code\modules\power\lighting.dm:618:error: H.dna.species.adjust_charge: undefined proc
-					if(e)
-						e.adjust_charge(5)
+					var/datum/species/ethereal/E = H.dna?.species // code\modules\power\lighting.dm:618:error: H.dna.species.adjust_charge: undefined proc
+					if(E)
+						E.adjust_charge(5)
 					return
 				return
 				
