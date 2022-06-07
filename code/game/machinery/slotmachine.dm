@@ -45,7 +45,7 @@
 
 	toggle_reel_spin(0)
 
-	for(cointype in typesof(/obj/item/coin))
+	for(var/cointype in typesof(/obj/item/coin))
 		var/obj/item/coin/C = new cointype
 		coinvalues["[cointype]"] = C.get_item_credit_value()
 		qdel(C) //Sigh
