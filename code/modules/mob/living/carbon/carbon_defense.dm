@@ -301,6 +301,15 @@
 
 	playsound(loc, 'sound/weapons/thudswoosh.ogg', 50, 1, -1)
 
+/mob/living/carbon/proc/share_bodytemperature(mob/living/carbon/M)
+	var/temp_diff = bodytemperature - M.bodytemperature
+	if(temp_diff > 0) // you are warm share the heat of life
+		M.adjust_bodytemperature((temp_diff * 0.5)) // warm up the giver
+		adjust_bodytemperature((temp_diff * -0.5)) // cool down the reciver
+
+	else // they are warmer leech from them
+		adjust_bodytemperature((temp_diff * -0.5)) // warm up the reciver
+		M.adjust_bodytemperature((temp_diff * 0.5)) // cool down the giver
 
 /mob/living/carbon/flash_act(intensity = 1, override_blindness_check = 0, affect_silicon = 0, visual = 0)
 	. = ..()
