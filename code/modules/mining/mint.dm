@@ -96,6 +96,8 @@
 
 /obj/machinery/mineral/mint/proc/create_coins(P)
 	var/turf/T = get_step(src,output_dir)
+	var/temp_list = list()
+	temp_list[chosen] = 400
 	if(T)
 		var/obj/item/storage/bag/money/bag_to_use = locate(/obj/item/storage/bag/money, T)
 		var/obj/item/O = new /obj/item/coin(src)
