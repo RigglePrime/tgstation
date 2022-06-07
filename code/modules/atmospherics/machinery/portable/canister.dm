@@ -189,7 +189,7 @@
 		air_contents.copy_from(existing_mixture)
 	else
 		create_gas()
-	update_overlays()
+	update_icon()
 
 
 /obj/machinery/portable_atmospherics/canister/proc/create_gas()
@@ -339,18 +339,9 @@
 		if(air_contents.release_gas_to(target_air, release_pressure) && !holding)
 			air_update_turf()
 
-	pump.process_atmos() // Pump gas.
 	if(!holding)
 		air_update_turf() // Update the environment if needed.
 	update_icon()
-
-	var/our_pressure = air_contents.return_pressure()
-	var/our_temperature = air_contents.return_temperature()
-
-	///function used to check the limit of the canisters and also set the amount of damage that the canister can recieve, if the heat and pressure are way higher than the limit the more damage will be done
-	if(our_temperature > heat_limit || our_pressure > pressure_limit)
-		take_damage(CLAMP((our_temperature/heat_limit) * (our_pressure/pressure_limit), 5, 50), BURN, 0)
-		return
 
 /obj/machinery/portable_atmospherics/canister/ui_interact(mob/user, ui_key = "main", datum/tgui/ui = null, force_open = FALSE, \
 															datum/tgui/master_ui = null, datum/ui_state/state = GLOB.physical_state)
