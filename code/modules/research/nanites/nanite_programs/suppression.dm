@@ -179,7 +179,7 @@
 		return
 	if(host_mob.stat == DEAD)
 		return
-	to_chat(host_mob, "<i>You hear a strange, robotic voice in your head...</i> \"<span class='robot'>[html_encode(sent_message)]</span>\"")
+	to_chat(host_mob, "<i>You hear a strange, robotic voice in your head...</i> \"<span class='robot'>[html_encode(message)]</span>\"")
 
 /datum/nanite_program/triggered/hallucination
 	name = "Hallucination"
