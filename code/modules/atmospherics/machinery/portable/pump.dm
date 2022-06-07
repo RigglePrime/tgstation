@@ -15,13 +15,6 @@
 
 	volume = 1000
 
-/obj/machinery/portable_atmospherics/pump/Initialize()
-	. = ..()
-	pump = new(src, FALSE)
-	pump.on = TRUE
-	pump.stat = 0
-	pump.build_network()
-
 /obj/machinery/portable_atmospherics/pump/Destroy()
 	var/turf/T = get_turf(src)
 	T.assume_air(air_contents)
