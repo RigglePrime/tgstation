@@ -49,7 +49,7 @@
 
 /obj/item/device/taperecorder/fire_act()
 	mytape.ruin() //Fires destroy the tape
-	return()
+	return null
 
 /obj/item/device/taperecorder/attack_hand(mob/user)
 	if(loc == user)
