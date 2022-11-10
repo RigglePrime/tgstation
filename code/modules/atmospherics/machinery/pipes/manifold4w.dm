@@ -61,8 +61,8 @@
 
 /obj/machinery/atmospherics/pipe/manifold4w/supplymain
 	name="main air supply pipe"
-	pipe_color=rgb(130,43,272)
-	color=rgb(130,43,272)
+	pipe_color=rgb(130,43,255)
+	color=rgb(130,43,255)
 
 /obj/machinery/atmospherics/pipe/manifold4w/supplymain/visible
 	level = 2
@@ -81,8 +81,8 @@
 	level = 1
 
 /obj/machinery/atmospherics/pipe/manifold4w/cyan
-	pipe_color=rgb(0,256,249)
-	color=rgb(0,256,249)
+	pipe_color=rgb(0,255,249)
+	color=rgb(0,255,249)
 
 /obj/machinery/atmospherics/pipe/manifold4w/cyan/visible
 	level = 2
@@ -91,8 +91,8 @@
 	level = 1
 
 /obj/machinery/atmospherics/pipe/manifold4w/green
-	pipe_color=rgb(30,256,0)
-	color=rgb(30,256,0)
+	pipe_color=rgb(30,255,0)
+	color=rgb(30,255,0)
 
 /obj/machinery/atmospherics/pipe/manifold4w/green/visible
 	level = 2
