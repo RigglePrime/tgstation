@@ -421,7 +421,7 @@
 	desc = "A heated storage unit. This one's seen better days."
 
 /obj/machinery/smartfridge/survival_pod/empty/New()
-	return()
+	return null
 
 /obj/machinery/smartfridge/survival_pod/accept_check(obj/item/O)
 	if(istype(O, /obj/item))
