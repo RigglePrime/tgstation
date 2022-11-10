@@ -627,7 +627,7 @@
 #define NANOTRASEN "NanotrasenStandard"
 #define SYNDI "SyndiSnacks"
 #define HEART "Heart"
-#define SMILE "SmileyFace"
+#define SMILEY_FACE "SmileyFace"
 
 /obj/item/weapon/storage/box/papersack
 	name = "paper sack"
@@ -649,7 +649,7 @@
 		if(contents.len)
 			user << "<span class='warning'>You can't modify this [src] with items still inside!</span>"
 			return
-		var/list/designs = list(NODESIGN, NANOTRASEN, SYNDI, HEART, SMILE, "Cancel")
+		var/list/designs = list(NODESIGN, NANOTRASEN, SYNDI, HEART, SMILEY_FACE, "Cancel")
 		var/switchDesign = input("Select a Design:", "Paper Sack Design", designs[1]) in designs
 		if(get_dist(usr, src) > 1)
 			usr << "<span class='warning'>You have moved too far away!</span>"
@@ -670,7 +670,7 @@
 				desc = "The design on this paper sack is a remnant of the notorious 'SyndieSnacks' program."
 			if(HEART)
 				desc = "A paper sack with a heart etched onto the side."
-			if(SMILE)
+			if(SMILEY_FACE)
 				desc = "A paper sack with a crude smile etched onto the side."
 		return 0
 	else if(W.is_sharp())
@@ -691,7 +691,7 @@
 #undef NANOTRASEN
 #undef SYNDI
 #undef HEART
-#undef SMILE
+#undef SMILEY_FACE
 
 /obj/item/weapon/storage/box/ingredients //This box is for the randomely chosen version the chef spawns with, it shouldn't actually exist.
 	name = "ingredients box"
