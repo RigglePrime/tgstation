@@ -219,7 +219,7 @@
 	var/list/available_scriptures = list()
 	var/datum/clockwork_scripture/scripture_to_recite
 	switch(scripture_tier)
-		if(SCRIPTURE_DRIVER,SCRIPTURE_SCRIPT,SCRIPTURE_APPLICATION,SCRIPTURE_REVENANT,SCRIPTURE_JUDGEMENT); //; for the empty if
+		if(SCRIPTURE_DRIVER,SCRIPTURE_SCRIPT,SCRIPTURE_APPLICATION,SCRIPTURE_REVENANT,SCRIPTURE_JUDGEMENT) //; for the empty if
 		else
 			user << "<span class='warning'>That section of scripture is still locked!</span>"
 			return 0
