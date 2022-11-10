@@ -388,15 +388,15 @@
 				if("tail_lizard")
 					S = tails_list_lizard[H.dna.features["tail_lizard"]]
 				if("waggingtail_lizard")
-					S.= animated_tails_list_lizard[H.dna.features["tail_lizard"]]
+					S = animated_tails_list_lizard[H.dna.features["tail_lizard"]]
 				if("tail_human")
 					S = tails_list_human[H.dna.features["tail_human"]]
 				if("waggingtail_human")
-					S.= animated_tails_list_human[H.dna.features["tail_human"]]
+					S = animated_tails_list_human[H.dna.features["tail_human"]]
 				if("spines")
 					S = spines_list[H.dna.features["spines"]]
 				if("waggingspines")
-					S.= animated_spines_list[H.dna.features["spines"]]
+					S = animated_spines_list[H.dna.features["spines"]]
 				if("snout")
 					S = snouts_list[H.dna.features["snout"]]
 				if("frills")
