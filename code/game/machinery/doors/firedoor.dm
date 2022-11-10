@@ -4,8 +4,8 @@
 #define CONSTRUCTION_GUTTED 3 //Wires are removed, circuit ready to remove
 #define CONSTRUCTION_NOCIRCUIT 4 //Circuit board removed, can safely weld apart
 
-/var/const/OPEN = 1
-/var/const/CLOSED = 2
+#define FIRELOCK_OPEN 1
+#define FIRELOCK_CLOSED 2
 
 /obj/machinery/door/firedoor
 	name = "firelock"
@@ -127,10 +127,10 @@
 	if(operating || stat & NOPOWER || !nextstate)
 		return
 	switch(nextstate)
-		if(OPEN)
+		if(FIRELOCK_OPEN)
 			nextstate = null
 			open()
-		if(CLOSED)
+		if(FIRELOCK_CLOSED)
 			nextstate = null
 			close()
 
@@ -363,3 +363,6 @@
 /obj/structure/firelock_frame/heavy
 	name = "heavy firelock frame"
 	reinforced = 1
+
+#undef FIRELOCK_OPEN
+#undef FIRELOCK_CLOSED
