@@ -1,6 +1,12 @@
+#ifndef HEAT_DAMAGE_LEVEL_1
 #define HEAT_DAMAGE_LEVEL_1 2 //Amount of damage applied when your body temperature just passes the 360.15k safety point
+#endif
+#ifndef HEAT_DAMAGE_LEVEL_2
 #define HEAT_DAMAGE_LEVEL_2 3 //Amount of damage applied when your body temperature passes the 400K point
+#endif
+#ifndef HEAT_DAMAGE_LEVEL_3
 #define HEAT_DAMAGE_LEVEL_3 8 //Amount of damage applied when your body temperature passes the 460K point and you are on fire
+#endif
 
 
 /mob/living/carbon/alien
@@ -146,11 +152,6 @@ Des: Removes all infected images from the alien.
 	if(mind)
 		mind.transfer_to(new_xeno)
 	qdel(src)
-
-#undef HEAT_DAMAGE_LEVEL_1
-#undef HEAT_DAMAGE_LEVEL_2
-#undef HEAT_DAMAGE_LEVEL_3
-
 
 /mob/living/carbon/alien/update_sight()
 	if(!client)
