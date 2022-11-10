@@ -3,22 +3,6 @@
 #define HUMAN_MAX_OXYLOSS 3
 #define HUMAN_CRIT_MAX_OXYLOSS (SSmob.wait/30)
 
-#define HEAT_DAMAGE_LEVEL_1 2
-#define HEAT_DAMAGE_LEVEL_2 3
-#define HEAT_DAMAGE_LEVEL_3 8
-
-#define COLD_DAMAGE_LEVEL_1 0.5
-#define COLD_DAMAGE_LEVEL_2 1.5
-#define COLD_DAMAGE_LEVEL_3 3
-
-#define HEAT_GAS_DAMAGE_LEVEL_1 2
-#define HEAT_GAS_DAMAGE_LEVEL_2 4
-#define HEAT_GAS_DAMAGE_LEVEL_3 8
-
-#define COLD_GAS_DAMAGE_LEVEL_1 0.5
-#define COLD_GAS_DAMAGE_LEVEL_2 1.5
-#define COLD_GAS_DAMAGE_LEVEL_3 3
-
 /datum/species
 	var/id = null		// if the game needs to manually check your race to do something not included in a proc here, it will use this
 	var/limbs_id = null	//this is used if you want to use a different species limb sprites. Mainly used for angels as they look like humans.
