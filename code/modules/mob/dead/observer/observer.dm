@@ -406,7 +406,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	setDir(2 )//reset dir so the right directional sprites show up
 	..()
 	//restart our floating animation after orbit is done.
-	sleep 2  //orbit sets up a 2ds animation when it finishes, so we wait for that to end
+	sleep(2)  //orbit sets up a 2ds animation when it finishes, so we wait for that to end
 	if (!orbiting) //make sure another orbit hasn't started
 		pixel_y = 0
 		animate(src, pixel_y = 2, time = 10, loop = -1)
