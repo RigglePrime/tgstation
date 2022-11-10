@@ -397,7 +397,7 @@
 	cut_overlays()
 	if(inventory_head)
 		var/image/head_icon
-		var/datum/dog_fashion.DF = new inventory_head.dog_fashion(src)
+		var/datum/dog_fashion/DF = new inventory_head.dog_fashion(src)
 
 		if(!DF.obj_icon_state)
 			DF.obj_icon_state = inventory_head.icon_state
@@ -417,7 +417,7 @@
 
 	if(inventory_back)
 		var/image/back_icon
-		var/datum/dog_fashion.DF = new inventory_back.dog_fashion(src)
+		var/datum/dog_fashion/DF = new inventory_back.dog_fashion(src)
 
 		if(!DF.obj_icon_state)
 			DF.obj_icon_state = inventory_back.icon_state
