@@ -663,7 +663,6 @@
 		else
 			dst = destination
 		. += " towards [dst ? dst.name : "unknown location"] ([timeLeft(600)] minutes)"
-#undef DOCKING_PORT_HIGHLIGHT
 
 
 /turf/proc/copyTurf(turf/T)
