@@ -1,5 +1,8 @@
 // Areas.dm
 
+#define FIRELOCK_OPEN 1
+#define FIRELOCK_CLOSED 2
+
 // Added to fix mech fabs 05/2013 ~Sayu
 // This is necessary due to lighting subareas.  If you were to go in assuming that things in
 // the same logical /area have the parent /area object... well, you would be mistaken.  If you
@@ -123,7 +126,7 @@
 			for(var/obj/machinery/door/firedoor/D in RA)
 				if(!D.welded)
 					if(D.operating)
-						D.nextstate = CLOSED
+						D.nextstate = FIRELOCK_CLOSED
 					else if(!D.density)
 						addtimer(D, "close", 0)
 			for(var/obj/machinery/firealarm/F in RA)
@@ -149,7 +152,7 @@
 			for(var/obj/machinery/door/firedoor/D in RA)
 				if(!D.welded)
 					if(D.operating)
-						D.nextstate = OPEN
+						D.nextstate = FIRELOCK_OPEN
 					else if(D.density)
 						addtimer(D, "open", 0)
 			for(var/obj/machinery/firealarm/F in RA)
@@ -220,7 +223,7 @@
 		for(var/obj/machinery/door/firedoor/D in src)
 			if(!D.welded)
 				if(D.operating)
-					D.nextstate = OPEN
+					D.nextstate = FIRELOCK_OPEN
 				else if(D.density)
 					addtimer(D, "open", 0)
 
@@ -370,3 +373,6 @@
 	always_unpowered = 0
 	valid_territory = 0
 	addSorted()
+
+#undef FIRELOCK_OPEN
+#undef FIRELOCK_CLOSED
