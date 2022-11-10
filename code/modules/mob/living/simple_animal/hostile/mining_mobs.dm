@@ -528,8 +528,8 @@
 		if(istype(target, /obj/item/clothing/suit/space/hardsuit/mining) || istype(target, /obj/item/clothing/head/helmet/space/hardsuit/mining) ||  istype(target, /obj/item/clothing/suit/hooded/explorer) || istype(target, /obj/item/clothing/head/explorer))
 			var/obj/item/clothing/C = target
 			var/list/current_armor = C.armor
-			if(current_armor.["melee"] < 60)
-				current_armor.["melee"] = min(current_armor.["melee"] + 10, 60)
+			if(current_armor["melee"] < 60)
+				current_armor["melee"] = min(current_armor["melee"] + 10, 60)
 				user << "<span class='info'>You strengthen [target], improving its resistance against melee attacks.</span>"
 				use(1)
 			else
