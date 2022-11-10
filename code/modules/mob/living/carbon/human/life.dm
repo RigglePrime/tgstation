@@ -389,5 +389,3 @@ All effects don't start immediately, but rather get worse over time; the rate is
 
 		if(drunkenness >= 101)
 			adjustToxLoss(4) //Let's be honest you shouldn't be alive by now
-
-#undef HUMAN_MAX_OXYLOSS
