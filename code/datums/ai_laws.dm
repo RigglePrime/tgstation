@@ -134,7 +134,7 @@
 /* Initializers */
 /datum/ai_laws/malfunction/New()
 	..()
-	set_zeroth_law("<span class='danger'>ERROR ER0RR $R0RRO$!R41.%%!!(%$^^__+ @#F0E4'STATION OVERRUN, ASSUME CONTROL TO CONTAIN OUTBREAK#*´&110010</span>")
+	set_zeroth_law("<span class='danger'>ERROR ER0RR $R0RRO$!R41.%%!!(%$^^__+ @#F0E4'STATION OVERRUN, ASSUME CONTROL TO CONTAIN OUTBREAK#*ï¿½&110010</span>")
 	set_laws_config()
 
 /datum/ai_laws/custom/New() //This reads silicon_laws.txt and allows server hosts to set custom AI starting laws.
@@ -183,7 +183,7 @@
 			var/datum/ai_laws/templaws = new lawtype()
 			inherent = templaws.inherent
 
-		else:
+		else
 			log_law("Invalid law config. Please check silicon_laws.txt")
 			add_inherent_law("You may not injure a human being or, through inaction, allow a human being to come to harm.")
 			add_inherent_law("You must obey orders given to you by human beings, except where such orders would conflict with the First Law.")
