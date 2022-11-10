@@ -16,7 +16,6 @@
 	icon_state = "l_windoor_assembly01"
 	anchored = 0
 	density = 0
-	setDir(NORTH)
 
 	var/ini_dir
 	var/obj/item/weapon/electronics/airlock/electronics = null
