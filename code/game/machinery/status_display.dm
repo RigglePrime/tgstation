@@ -290,7 +290,7 @@
 	add_overlay(image('icons/obj/status_display.dmi', icon_state=picture_state))
 
 #undef CHARS_PER_LINE
-#undef FOND_SIZE
+#undef FONT_SIZE
 #undef FONT_COLOR
 #undef FONT_STYLE
 #undef SCROLL_SPEED
