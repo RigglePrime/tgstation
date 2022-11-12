@@ -82,7 +82,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 		proctype = "verb"
 	
 	if(targetselected && !hascall(target, procname))
-		usr << "<font color='red'>Error: callproc(): type [target.type] has no [proctype] named [procname].</font>")
+		usr << "<font color='red'>Error: callproc(): type [target.type] has no [proctype] named [procname].</font>"
 		return
 	else
 		var/procpath = text2path("[proctype]/[procname]")
