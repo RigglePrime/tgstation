@@ -80,7 +80,7 @@
 		if(!ircreplyamount)	//to prevent people from spamming irc
 			return
 		if(!msg)
-			msg = input(src,"Message:", "Private message to Administrator") as text|null
+			msg = stripped_multiline_input(src,"Message:", "Private message to Administrator") as text|null
 
 		if(!msg)
 			return
@@ -99,7 +99,7 @@
 
 		//get message text, limit it's length.and clean/escape html
 		if(!msg)
-			msg = input(src,"Message:", "Private message to [key_name(C, 0, 0)]") as text|null
+			msg = stripped_multiline_input(src,"Message:", "Private message to [key_name(C, 0, 0)]") as text|null
 
 			if(!msg)
 				return
