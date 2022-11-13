@@ -925,8 +925,9 @@ var/next_mob_id = 0
 /mob/proc/update_health_hud()
 	return
 
-/mob/living/on_varedit(modified_var)
-	switch(modified_var)
+/mob/living/vv_edit_var(var_name, var_value)
+	. = ..()
+	switch(var_name)
 		if("weakened")
 			SetWeakened(weakened)
 		if("stunned")
@@ -949,7 +950,6 @@ var/next_mob_id = 0
 			updatehealth()
 		if("resize")
 			update_transform()
-	..()
 
 /mob/proc/is_literate()
 	return 0

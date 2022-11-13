@@ -436,6 +436,7 @@ var/list/blood_splatter_icons = list()
 /atom/proc/setDir(newdir)
 	dir = newdir
 
-/atom/on_varedit(modified_var)
+/atom/vv_edit_var(var_name, var_value)
+	. = ..()
 	if(!Debug2)
 		admin_spawned = TRUE

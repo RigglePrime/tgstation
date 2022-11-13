@@ -155,11 +155,15 @@ var/list/VVckey_edit = list("key", "ckey")
 				for(var/V in varsvars)
 					var_value = replacetext(var_value,"\[[V]]","[O.vars[V]]")
 
+	if (O)
+		L = L.Copy()
+
 	L += var_value
 	switch(alert("Would you like to associate a var with the list entry?",,"Yes","No"))
 		if("Yes")
 			L[var_value] = mod_list_add_ass(O) //haha
-	O.on_varedit(objectvar)
+	if(O && !try_edit_var(O, objectvar, L))
+		return
 	world.log << "### ListVarEdit by [src]: [O.type] [objectvar]: ADDED=[var_value]"
 	log_admin("[key_name(src)] modified [original_name]'s [objectvar]: ADDED=[var_value]")
 	message_admins("[key_name_admin(src)] modified [original_name]'s [objectvar]: ADDED=[var_value]")
@@ -175,6 +179,8 @@ var/list/VVckey_edit = list("key", "ckey")
 		if(confirm != "Continue")
 			return
 
+	if (O)
+		L = L.Copy()
 	var/assoc = 0
 	if(L.len > 0)
 		var/a = L[1]
@@ -321,11 +327,12 @@ var/list/VVckey_edit = list("key", "ckey")
 			modify_variables(variable)
 
 		if("DELETE FROM LIST")
+			L -= variable
+			if(O && !try_edit_var(O, objectvar, L))
+				return
 			world.log << "### ListVarEdit by [src]: [O.type] [objectvar]: REMOVED=[html_encode("[variable]")]"
 			log_admin("[key_name(src)] modified [original_name]'s [objectvar]: REMOVED=[variable]")
 			message_admins("[key_name_admin(src)] modified [original_name]'s [objectvar]: REMOVED=[variable]")
-			L -= variable
-			O.on_varedit(objectvar)
 			return
 
 		if("text")
@@ -408,7 +415,8 @@ var/list/VVckey_edit = list("key", "ckey")
 			else
 				L[L.Find(variable)] = new_var
 
-	O.on_varedit(objectvar)
+	if(O && !try_edit_var(O, objectvar, L))
+		return
 	world.log << "### ListVarEdit by [src]: [O.type] [objectvar]: [original_var]=[new_var]"
 	log_admin("[key_name(src)] modified [original_name]'s [objectvar]: [original_var]=[new_var]")
 	message_admins("[key_name_admin(src)] modified [original_name]'s varlist [objectvar]: [original_var]=[new_var]")
@@ -595,18 +603,20 @@ var/list/VVckey_edit = list("key", "ckey")
 	if(holder.marked_datum && class == "marked datum ([holder.marked_datum.type])")
 		class = "marked datum"
 
+	var/result = TRUE
 	switch(class)
 
 		if("list")
 			if(!istype(O.vars[variable],/list))
 				var/listchange = alert(usr,"Force change to empty list?","Change to list?","Yes","No")
 				if(listchange == "Yes")
-					O.vars[variable] = list()	//Unlike all other VV operations, the type change must be set here, not at the end of setting data. Hence the warning
+					if(!try_edit_var(O, variable, list()))	//Unlike all other VV operations, the type change must be set here, not at the end of setting data. Hence the warning
+						return
 			mod_list(O.vars[variable], O, original_name, variable)
 			return
 
 		if("restore to default")
-			O.vars[variable] = initial(O.vars[variable])
+			result |= try_edit_var(O, variable, initial(O.vars[variable]))
 
 		if("edit referenced object")
 			return .(O.vars[variable])
@@ -622,7 +632,7 @@ var/list/VVckey_edit = list("key", "ckey")
 					for(var/V in varsvars)
 						var_new = replacetext(var_new,"\[[V]]","[O.vars[V]]")
 
-			O.vars[variable] = var_new
+			result |= try_edit_var(O, variable, var_new)
 
 		if("num")
 			if(variable=="luminosity")
@@ -638,11 +648,11 @@ var/list/VVckey_edit = list("key", "ckey")
 				if((O.vars[variable] < 2) && (var_new == 2))//Kill he
 					living_mob_list -= O
 					dead_mob_list += O
-				O.vars[variable] = var_new
+				result |= try_edit_var(src, O, variable, var_new)
 			else
 				var/var_new =  input("Enter new number:","Num",O.vars[variable]) as null|num
 				if(var_new==null) return
-				O.vars[variable] = var_new
+				result |= try_edit_var(O, variable, var_new)
 
 		if("type")
 			var/target_path = input("Enter type:", "Type", O.vars[variable]) as null|text
@@ -653,44 +663,45 @@ var/list/VVckey_edit = list("key", "ckey")
 				var_new = pick_closest_path(target_path)
 			if(!var_new)
 				return
-			O.vars[variable] = var_new
+			result |= try_edit_var(O, variable, var_new)
 
 		if("reference")
 			var/var_new = input("Select reference:","Reference",O.vars[variable]) as null|mob|obj|turf|area in world
 			if(var_new==null) return
-			O.vars[variable] = var_new
+			result |= try_edit_var(O, variable, var_new)
 
 		if("mob reference")
 			var/var_new = input("Select reference:","Reference",O.vars[variable]) as null|mob in world
 			if(var_new==null) return
-			O.vars[variable] = var_new
+			result |= try_edit_var(O, variable, var_new)
 
 		if("file")
 			var/var_new = input("Pick file:","File",O.vars[variable]) as null|file
 			if(var_new==null) return
-			O.vars[variable] = var_new
+			result |= try_edit_var(O, variable, var_new)
 
 		if("icon")
 			var/var_new = input("Pick icon:","Icon",O.vars[variable]) as null|icon
 			if(var_new==null) return
-			O.vars[variable] = var_new
+			result |= try_edit_var(O, variable, var_new)
 
 		if("marked datum")
-			O.vars[variable] = holder.marked_datum
+			result |= try_edit_var(O, variable, holder.marked_datum)
 
 		if("new atom")
 			var/type = input("Enter type:","Type") as null|anything in typesof(/obj,/mob,/area,/turf)
 			var/var_new = new type()
 			if(var_new==null) return
-			O.vars[variable] = var_new
+			result |= try_edit_var(O, variable, var_new)
 
 		if("new datum")
 			var/type = input("Enter type:","Type") as null|anything in (typesof(/datum)-typesof(/obj,/mob,/area,/turf,/client))
 			var/var_new = new type()
 			if(var_new==null) return
-			O.vars[variable] = var_new
+			result |= try_edit_var(O, variable, var_new)
 
-	O.on_varedit(variable)
+	if(!result)
+		return
 	world.log << "### VarEdit by [src]: [O.type] [variable]=[html_encode("[O.vars[variable]]")]"
 	log_admin("[key_name(src)] modified [original_name]'s [variable] to [O.vars[variable]]")
 	message_admins("[key_name_admin(src)] modified [original_name]'s [variable] to [O.vars[variable]]")

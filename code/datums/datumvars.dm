@@ -7,8 +7,24 @@ var/global/list/internal_byond_list_vars = list("contents" = TRUE, "verbs" = TRU
 	var/datum/reagents/reagents = null
 	var/fingerprintslast = null
 
-/datum/proc/on_varedit(modified_var) //called whenever a var is edited
+/datum/proc/CanProcCall(procname)
+	return TRUE
+
+/datum/proc/can_vv_get(var_name)
+	return TRUE
+
+/datum/proc/vv_edit_var(var_name, var_value) //called whenever a var is edited
+	if(var_name == NAMEOF(src, vars))
+		return FALSE
 	var_edited = 1
+	vars[var_name] = var_value
+	return TRUE
+
+/datum/proc/vv_get_var(var_name)
+	switch(var_name)
+		if (NAMEOF(src, vars))
+			return debug_variable(var_name, list(), 0, src)
+	return debug_variable(var_name, vars[var_name], 0, src)
 
 /datum/proc/on_reagent_change()
 	return
@@ -350,7 +366,7 @@ body
 
 	usr << browse(html, "window=variables\ref[D];size=475x650")
 
-/client/proc/debug_variable(name, value, level, datum/DA = null)
+/proc/debug_variable(name, value, level, datum/DA = null)
 	var/html = ""
 
 	if(DA)

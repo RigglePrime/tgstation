@@ -162,13 +162,13 @@
 			if(R.cell.use(shot.e_cost)) 		//Take power from the borg...
 				power_supply.give(shot.e_cost)	//... to recharge the shot
 
-/obj/item/weapon/gun/energy/on_varedit(modified_var)
-	if(modified_var == "selfcharge")
+/obj/item/weapon/gun/energy/vv_edit_var(var_name, var_value)
+	. = ..()
+	if(var_name == "selfcharge")
 		if(selfcharge)
 			START_PROCESSING(SSobj, src)
 		else
 			STOP_PROCESSING(SSobj, src)
-	..()
 
 /obj/item/weapon/gun/energy/burn()
 	if(power_supply)

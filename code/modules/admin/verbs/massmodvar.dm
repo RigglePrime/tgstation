@@ -136,46 +136,48 @@
 	else
 		original_name = O:name
 
+	var/result = TRUE
 	switch(class)
 
 		if("restore to default")
-			O.vars[variable] = initial(O.vars[variable])
+			var/value = initial(O.vars[variable])
+			result |= try_edit_var(O, variable, value)
 			if(method)
 				if(istype(O, /mob))
 					for(var/mob/M in mob_list)
 						if ( istype(M , O.type) )
-							M.vars[variable] = O.vars[variable]
+							result |= try_edit_var(M, variable, value)
 						CHECK_TICK
 
 				else if(istype(O, /obj))
 					for(var/obj/A in world)
 						if ( istype(A , O.type) )
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, value)
 						CHECK_TICK
 
 				else if(istype(O, /turf))
 					for(var/turf/A in world)
 						if ( istype(A , O.type) )
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, value)
 						CHECK_TICK
 
 			else
 				if(istype(O, /mob))
 					for(var/mob/M in mob_list)
 						if (M.type == O.type)
-							M.vars[variable] = O.vars[variable]
+							result |= try_edit_var(M, variable, value)
 						CHECK_TICK
 
 				else if(istype(O, /obj))
 					for(var/obj/A in world)
 						if (A.type == O.type)
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, value)
 						CHECK_TICK
 
 				else if(istype(O, /turf))
 					for(var/turf/A in world)
 						if (A.type == O.type)
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, value)
 						CHECK_TICK
 
 		if("edit referenced object")
@@ -208,7 +210,7 @@
 					for(var/V in varsvars)
 						new_value = replacetext(new_value,"\[[V]]","[O.vars[V]]")
 
-			O.vars[variable] = new_value
+			result |= try_edit_var(O, variable, new_value)
 
 			//Convert the string vars for anything that's not O
 			if(method)
@@ -224,7 +226,7 @@
 								else
 									new_value = O.vars[variable] //We already processed the non-unique form for O, reuse it
 
-							M.vars[variable] = new_value
+							result |= try_edit_var(M, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /obj))
@@ -239,7 +241,7 @@
 								else
 									new_value = O.vars[variable]
 
-							A.vars[variable] = new_value
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /turf))
@@ -254,7 +256,7 @@
 								else
 									new_value = O.vars[variable]
 
-							A.vars[variable] = new_value
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 			else
 				if(istype(O, /mob))
@@ -269,7 +271,7 @@
 								else
 									new_value = O.vars[variable]
 
-							M.vars[variable] = new_value
+							result |= try_edit_var(M, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /obj))
@@ -284,7 +286,7 @@
 								else
 									new_value = O.vars[variable]
 
-							A.vars[variable] = new_value
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /turf))
@@ -299,7 +301,7 @@
 								else
 									new_value = O.vars[variable]
 
-							A.vars[variable] = new_value
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 		if("num")
@@ -310,7 +312,7 @@
 			if(variable=="luminosity")
 				O.SetLuminosity(new_value)
 			else
-				O.vars[variable] = new_value
+				result |= try_edit_var(O, variable, new_value)
 
 			if(method)
 				if(istype(O, /mob))
@@ -319,7 +321,7 @@
 							if(variable=="luminosity")
 								M.SetLuminosity(new_value)
 							else
-								M.vars[variable] = O.vars[variable]
+								result |= try_edit_var(M, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /obj))
@@ -328,7 +330,7 @@
 							if(variable=="luminosity")
 								A.SetLuminosity(new_value)
 							else
-								A.vars[variable] = O.vars[variable]
+								result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /turf))
@@ -337,7 +339,7 @@
 							if(variable=="luminosity")
 								A.SetLuminosity(new_value)
 							else
-								A.vars[variable] = O.vars[variable]
+								result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 			else
@@ -347,7 +349,7 @@
 							if(variable=="luminosity")
 								M.SetLuminosity(new_value)
 							else
-								M.vars[variable] = O.vars[variable]
+								result |= try_edit_var(M, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /obj))
@@ -356,7 +358,7 @@
 							if(variable=="luminosity")
 								A.SetLuminosity(new_value)
 							else
-								A.vars[variable] = O.vars[variable]
+								result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /turf))
@@ -365,174 +367,138 @@
 							if(variable=="luminosity")
 								A.SetLuminosity(new_value)
 							else
-								A.vars[variable] = O.vars[variable]
+								result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 		if("type")
 			var/new_value
 			new_value = input("Enter type:","Type",O.vars[variable]) as null|anything in typesof(/obj,/mob,/area,/turf)
 			if(new_value == null) return
-			O.vars[variable] = new_value
+			result |= try_edit_var(O, variable, new_value)
 			if(method)
 				if(istype(O, /mob))
 					for(var/mob/M in mob_list)
 						if ( istype(M , O.type) )
-							M.vars[variable] = O.vars[variable]
+							result |= try_edit_var(M, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /obj))
 					for(var/obj/A in world)
 						if ( istype(A , O.type) )
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /turf))
 					for(var/turf/A in world)
 						if ( istype(A , O.type) )
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 			else
 				if(istype(O, /mob))
 					for(var/mob/M in mob_list)
 						if (M.type == O.type)
-							M.vars[variable] = O.vars[variable]
+							result |= try_edit_var(M, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /obj))
 					for(var/obj/A in world)
 						if (A.type == O.type)
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /turf))
 					for(var/turf/A in world)
 						if (A.type == O.type)
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 		if("file")
 			var/new_value = input("Pick file:","File",O.vars[variable]) as null|file
 			if(new_value == null) return
-			O.vars[variable] = new_value
+			result |= try_edit_var(O, variable, new_value)
 
 			if(method)
 				if(istype(O, /mob))
 					for(var/mob/M in mob_list)
 						if ( istype(M , O.type) )
-							M.vars[variable] = O.vars[variable]
+							result |= try_edit_var(M, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O.type, /obj))
 					for(var/obj/A in world)
 						if ( istype(A , O.type) )
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O.type, /turf))
 					for(var/turf/A in world)
 						if ( istype(A , O.type) )
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 			else
 				if(istype(O, /mob))
 					for(var/mob/M in mob_list)
 						if (M.type == O.type)
-							M.vars[variable] = O.vars[variable]
+							result |= try_edit_var(M, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /obj))
 					for(var/obj/A in world)
 						if (A.type == O.type)
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /turf))
 					for(var/turf/A in world)
 						if (A.type == O.type)
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 		if("icon")
 			var/new_value = input("Pick icon:","Icon",O.vars[variable]) as null|icon
 			if(new_value == null) return
-			O.vars[variable] = new_value
+			result |= try_edit_var(O, variable, new_value)
 			if(method)
 				if(istype(O, /mob))
 					for(var/mob/M in mob_list)
 						if ( istype(M , O.type) )
-							M.vars[variable] = O.vars[variable]
+							result |= try_edit_var(M, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /obj))
 					for(var/obj/A in world)
 						if ( istype(A , O.type) )
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /turf))
 					for(var/turf/A in world)
 						if ( istype(A , O.type) )
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 			else
 				if(istype(O, /mob))
 					for(var/mob/M in mob_list)
 						if (M.type == O.type)
-							M.vars[variable] = O.vars[variable]
+							result |= try_edit_var(M, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /obj))
 					for(var/obj/A in world)
 						if (A.type == O.type)
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
 				else if(istype(O, /turf))
 					for(var/turf/A in world)
 						if (A.type == O.type)
-							A.vars[variable] = O.vars[variable]
+							result |= try_edit_var(A, variable, new_value)
 						CHECK_TICK
 
-	if(method)
-		if(istype(O,/mob))
-			for(var/mob/M in mob_list)
-				if(istype(M,O.type))
-					M.on_varedit(variable)
-				CHECK_TICK
-
-		else if(istype(O,/obj))
-			for(var/obj/A in world)
-				if(istype(A,O.type))
-					A.on_varedit(variable)
-				CHECK_TICK
-
-		else if(istype(O,/turf))
-			for(var/turf/A in block(locate(1,1,1),locate(world.maxx,world.maxy,world.maxz)))
-				if(istype(A,O.type))
-					A.on_varedit(variable)
-				CHECK_TICK
-
-	else
-		if(istype(O, /mob))
-			for(var/mob/M in mob_list)
-				if(M.type == O.type)
-					M.on_varedit(variable)
-				CHECK_TICK
-
-		else if(istype(O, /obj))
-			for(var/obj/A in world)
-				if(A.type == O.type)
-					A.on_varedit(variable)
-				CHECK_TICK
-
-		else if(istype(O, /turf))
-			for(var/turf/A in world)
-				if(A.type == O.type)
-					A.on_varedit(variable)
-				CHECK_TICK
-
+	if(!result)
+		return
 	world.log << "### MassVarEdit by [src]: [O.type] [variable]=[html_encode("[O.vars[variable]]")]"
 	log_admin("[key_name(src)] mass modified [original_name]'s [variable] to [O.vars[variable]]")
 	message_admins("[key_name_admin(src)] mass modified [original_name]'s [variable] to [O.vars[variable]]")
