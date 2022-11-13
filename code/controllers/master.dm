@@ -482,7 +482,7 @@ var/CURRENT_TICKLIMIT = TICK_LIMIT_RUNNING
 
 
 
-/datum/controller/master/proc/stat_entry()
+/datum/controller/master/stat_entry()
 	if(!statclick)
 		statclick = new/obj/effect/statclick/debug("Initializing...", src)
 
