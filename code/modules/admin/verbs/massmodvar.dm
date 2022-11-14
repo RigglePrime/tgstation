@@ -46,7 +46,7 @@
 	else
 		variable = var_name
 
-	if(!variable)
+	if(!variable || !O.can_vv_get(variable))
 		return
 	var/default
 	var/var_value = O.vars[variable]

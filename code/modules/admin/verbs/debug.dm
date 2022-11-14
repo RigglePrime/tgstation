@@ -124,6 +124,8 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 	if(!hascall(A,procname))
 		usr << "<span class='warning'>Error: callproc_datum(): target has no such call [procname].</span>"
 		return
+	if(A && !A.CanProcCall(procname))
+		to_chat(usr, "<span class='warning'>Error: You cannot call that proc.</span>")
 	var/list/lst = get_callproc_args()
 	if(!lst)
 		return

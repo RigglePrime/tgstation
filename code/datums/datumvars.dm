@@ -39,6 +39,8 @@ var/global/list/internal_byond_list_vars = list("contents" = TRUE, "verbs" = TRU
 		usr << "<span class='danger'>You need to be an administrator to access this.</span>"
 		return
 
+	if(!D.can_vv_get(null)) // Can we get any variable at all?
+		return
 
 	var/title = ""
 	var/body = ""
@@ -327,13 +329,14 @@ var/global/list/internal_byond_list_vars = list("contents" = TRUE, "verbs" = TRU
 
 	var/list/names = list()
 	for (var/V in D.vars)
-		names += V
+		if(D.can_vv_get(V))
+			names += V
 	sleep(1)//For some reason, without this sleep, VVing will cause client to disconnect on certain objects.
 
 	names = sortList(names)
 
 	for (var/V in names)
-		body += debug_variable(V, D.vars[V], 0, D)
+		body += D.vv_get_var(V)
 
 	body += "</ol>"
 

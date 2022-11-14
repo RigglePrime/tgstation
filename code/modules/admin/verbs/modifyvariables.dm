@@ -425,6 +425,10 @@ var/list/VVckey_edit = list("key", "ckey")
 	if(!check_rights(R_VAREDIT))
 		return
 
+	if(O && !O.can_vv_get(param_var_name))
+		to_chat(usr, "<span class='danger'>You cannot view this variable!</span>")
+		return
+
 	if(is_type_in_list(O, forbidden_varedit_object_types))
 		usr << "<span class='danger'>It is forbidden to edit this object's variables.</span>"
 		return
