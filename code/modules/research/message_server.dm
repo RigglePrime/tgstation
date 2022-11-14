@@ -296,10 +296,10 @@ var/obj/machinery/blackbox_recorder/blackbox
 
 	round_end_data_gathering() //round_end time logging and some other data processing
 	establish_db_connection()
-	if (!dbcon.IsConnected()) return
+	if (!SSdbcore.IsConnected()) return
 	var/round_id
 
-	var/DBQuery/query = dbcon.NewQuery("SELECT MAX(round_id) AS round_id FROM [format_table_name("feedback")]")
+	var/datum/db_query/query = SSdbcore.NewQuery("SELECT MAX(round_id) AS round_id FROM [format_table_name("feedback")]")
 	query.Execute()
 	while (query.NextRow())
 		round_id = query.item[1]
@@ -320,7 +320,7 @@ var/obj/machinery/blackbox_recorder/blackbox
 	if (sqlrowlist == "")
 		return
 
-	var/DBQuery/query_insert = dbcon.NewQuery("INSERT DELAYED IGNORE INTO [format_table_name("feedback")] VALUES " + sqlrowlist)
+	var/datum/db_query/query_insert = SSdbcore.NewQuery("INSERT DELAYED IGNORE INTO [format_table_name("feedback")] VALUES " + sqlrowlist)
 	query_insert.Execute()
 
 

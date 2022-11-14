@@ -729,17 +729,17 @@
 			if("sql_enabled")
 				config.sql_enabled = 1
 			if("address")
-				sqladdress = value
+				SSdbcore.sqladdress = value
 			if("port")
-				sqlport = value
+				SSdbcore.sqlport = value
 			if("feedback_database")
-				sqlfdbkdb = value
+				SSdbcore.sqlfdbkdb = value
 			if("feedback_login")
-				sqlfdbklogin = value
+				SSdbcore.sqlfdbklogin = value
 			if("feedback_password")
-				sqlfdbkpass = value
+				SSdbcore.sqlfdbkpass = value
 			if("feedback_tableprefix")
-				sqlfdbktableprefix = value
+				SSdbcore.sqlfdbktableprefix = value
 			else
 				diary << "Unknown setting in configuration: '[name]'"
 

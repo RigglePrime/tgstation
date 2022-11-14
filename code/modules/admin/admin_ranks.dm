@@ -122,14 +122,14 @@ var/list/admin_ranks = list()								//list of all admin_rank datums
 			previous_rights = R.rights
 	else
 		establish_db_connection()
-		if(!dbcon.IsConnected())
+		if(!SSdbcore.IsConnected())
 			world.log << "Failed to connect to database in load_admin_ranks(). Reverting to legacy system."
 			diary << "Failed to connect to database in load_admin_ranks(). Reverting to legacy system."
 			config.admin_legacy_system = 1
 			load_admin_ranks()
 			return
 
-		var/DBQuery/query = dbcon.NewQuery("SELECT rank, flags FROM [format_table_name("admin_ranks")]")
+		var/datum/db_query/query = SSdbcore.NewQuery("SELECT rank, flags FROM [format_table_name("admin_ranks")]")
 		query.Execute()
 		while(query.NextRow())
 			var/rank_name = ckeyEx(query.item[1])
@@ -197,14 +197,14 @@ var/list/admin_ranks = list()								//list of all admin_rank datums
 			D.associate(directory[ckey])	//find the client for a ckey if they are connected and associate them with the new admin datum
 	else
 		establish_db_connection()
-		if(!dbcon.IsConnected())
+		if(!SSdbcore.IsConnected())
 			world.log << "Failed to connect to database in load_admins(). Reverting to legacy system."
 			diary << "Failed to connect to database in load_admins(). Reverting to legacy system."
 			config.admin_legacy_system = 1
 			load_admins()
 			return
 
-		var/DBQuery/query = dbcon.NewQuery("SELECT ckey, rank FROM [format_table_name("admin")]")
+		var/datum/db_query/query = SSdbcore.NewQuery("SELECT ckey, rank FROM [format_table_name("admin")]")
 		query.Execute()
 		while(query.NextRow())
 			var/ckey = ckey(query.item[1])
@@ -370,10 +370,10 @@ var/list/admin_ranks = list()								//list of all admin_rank datums
 
 /datum/admins/proc/updateranktodb(ckey,newrank)
 	establish_db_connection()
-	if (!dbcon.IsConnected())
+	if (!SSdbcore.IsConnected())
 		return
 	var/sql_ckey = sanitizeSQL(ckey)
 	var/sql_admin_rank = sanitizeSQL(newrank)
 
-	var/DBQuery/query_update = dbcon.NewQuery("UPDATE [format_table_name("player")] SET lastadminrank = '[sql_admin_rank]' WHERE ckey = '[sql_ckey]'")
+	var/datum/db_query/query_update = SSdbcore.NewQuery("UPDATE [format_table_name("player")] SET lastadminrank = '[sql_admin_rank]' WHERE ckey = '[sql_ckey]'")
 	query_update.Execute()

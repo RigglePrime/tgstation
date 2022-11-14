@@ -1,5 +1,5 @@
 /proc/add_note(target_ckey, notetext, timestamp, adminckey, logged = 1, server, secret)
-	if(!dbcon.IsConnected())
+	if(!SSdbcore.IsConnected())
 		usr << "<span class='danger'>Failed to establish database connection.</span>"
 		return
 	if(!target_ckey)
@@ -7,7 +7,7 @@
 		if(!new_ckey)
 			return
 		new_ckey = sanitizeSQL(new_ckey)
-		var/DBQuery/query_find_ckey = dbcon.NewQuery("SELECT ckey FROM [format_table_name("player")] WHERE ckey = '[new_ckey]'")
+		var/datum/db_query/query_find_ckey = SSdbcore.NewQuery("SELECT ckey FROM [format_table_name("player")] WHERE ckey = '[new_ckey]'")
 		if(!query_find_ckey.Execute())
 			var/err = query_find_ckey.ErrorMsg()
 			log_game("SQL ERROR obtaining ckey from player table. Error : \[[err]\]\n")
@@ -41,7 +41,7 @@
 				secret = 0
 			else
 				return
-	var/DBQuery/query_noteadd = dbcon.NewQuery("INSERT INTO [format_table_name("notes")] (ckey, timestamp, notetext, adminckey, server, secret) VALUES ('[target_sql_ckey]', '[timestamp]', '[notetext]', '[admin_sql_ckey]', '[server]', '[secret]')")
+	var/datum/db_query/query_noteadd = SSdbcore.NewQuery("INSERT INTO [format_table_name("notes")] (ckey, timestamp, notetext, adminckey, server, secret) VALUES ('[target_sql_ckey]', '[timestamp]', '[notetext]', '[admin_sql_ckey]', '[server]', '[secret]')")
 	if(!query_noteadd.Execute())
 		var/err = query_noteadd.ErrorMsg()
 		log_game("SQL ERROR adding new note to table. Error : \[[err]\]\n")
@@ -55,13 +55,13 @@
 	var/ckey
 	var/notetext
 	var/adminckey
-	if(!dbcon.IsConnected())
+	if(!SSdbcore.IsConnected())
 		usr << "<span class='danger'>Failed to establish database connection.</span>"
 		return
 	if(!note_id)
 		return
 	note_id = text2num(note_id)
-	var/DBQuery/query_find_note_del = dbcon.NewQuery("SELECT ckey, notetext, adminckey FROM [format_table_name("notes")] WHERE id = [note_id]")
+	var/datum/db_query/query_find_note_del = SSdbcore.NewQuery("SELECT ckey, notetext, adminckey FROM [format_table_name("notes")] WHERE id = [note_id]")
 	if(!query_find_note_del.Execute())
 		var/err = query_find_note_del.ErrorMsg()
 		log_game("SQL ERROR obtaining ckey, notetext, adminckey from notes table. Error : \[[err]\]\n")
@@ -70,7 +70,7 @@
 		ckey = query_find_note_del.item[1]
 		notetext = query_find_note_del.item[2]
 		adminckey = query_find_note_del.item[3]
-	var/DBQuery/query_del_note = dbcon.NewQuery("DELETE FROM [format_table_name("notes")] WHERE id = [note_id]")
+	var/datum/db_query/query_del_note = SSdbcore.NewQuery("DELETE FROM [format_table_name("notes")] WHERE id = [note_id]")
 	if(!query_del_note.Execute())
 		var/err = query_del_note.ErrorMsg()
 		log_game("SQL ERROR removing note from table. Error : \[[err]\]\n")
@@ -80,7 +80,7 @@
 	show_note(ckey)
 
 /proc/edit_note(note_id)
-	if(!dbcon.IsConnected())
+	if(!SSdbcore.IsConnected())
 		usr << "<span class='danger'>Failed to establish database connection.</span>"
 		return
 	if(!note_id)
@@ -88,7 +88,7 @@
 	note_id = text2num(note_id)
 	var/target_ckey
 	var/sql_ckey = sanitizeSQL(usr.ckey)
-	var/DBQuery/query_find_note_edit = dbcon.NewQuery("SELECT ckey, notetext, adminckey FROM [format_table_name("notes")] WHERE id = [note_id]")
+	var/datum/db_query/query_find_note_edit = SSdbcore.NewQuery("SELECT ckey, notetext, adminckey FROM [format_table_name("notes")] WHERE id = [note_id]")
 	if(!query_find_note_edit.Execute())
 		var/err = query_find_note_edit.ErrorMsg()
 		log_game("SQL ERROR obtaining notetext from notes table. Error : \[[err]\]\n")
@@ -103,7 +103,7 @@
 		new_note = sanitizeSQL(new_note)
 		var/edit_text = "Edited by [sql_ckey] on [SQLtime()] from<br>[old_note]<br>to<br>[new_note]<hr>"
 		edit_text = sanitizeSQL(edit_text)
-		var/DBQuery/query_update_note = dbcon.NewQuery("UPDATE [format_table_name("notes")] SET notetext = '[new_note]', last_editor = '[sql_ckey]', edits = CONCAT(IFNULL(edits,''),'[edit_text]') WHERE id = [note_id]")
+		var/datum/db_query/query_update_note = SSdbcore.NewQuery("UPDATE [format_table_name("notes")] SET notetext = '[new_note]', last_editor = '[sql_ckey]', edits = CONCAT(IFNULL(edits,''),'[edit_text]') WHERE id = [note_id]")
 		if(!query_update_note.Execute())
 			var/err = query_update_note.ErrorMsg()
 			log_game("SQL ERROR editing note. Error : \[[err]\]\n")
@@ -113,13 +113,13 @@
 		show_note(target_ckey)
 
 /proc/toggle_note_secrecy(note_id)
-	if(!dbcon.IsConnected())
+	if(!SSdbcore.IsConnected())
 		usr << "<span class='danger'>Failed to establish database connection.</span>"
 		return
 	if(!note_id)
 		return
 	note_id = text2num(note_id)
-	var/DBQuery/query_find_note_secret = dbcon.NewQuery("SELECT ckey, adminckey, secret FROM [format_table_name("notes")] WHERE id = [note_id]")
+	var/datum/db_query/query_find_note_secret = SSdbcore.NewQuery("SELECT ckey, adminckey, secret FROM [format_table_name("notes")] WHERE id = [note_id]")
 	if(!query_find_note_secret.Execute())
 		var/err = query_find_note_secret.ErrorMsg()
 		log_game("SQL ERROR obtaining ckey, adminckey, secret from notes table. Error : \[[err]\]\n")
@@ -130,7 +130,7 @@
 		var/secret = text2num(query_find_note_secret.item[3])
 		var/sql_ckey = sanitizeSQL(usr.ckey)
 		var/edit_text = "Made [secret ? "not secret" : "secret"] by [sql_ckey] on [SQLtime()]<hr>"
-		var/DBQuery/query_update_note = dbcon.NewQuery("UPDATE [format_table_name("notes")] SET secret = NOT secret, last_editor = '[sql_ckey]', edits = CONCAT(IFNULL(edits,''),'[edit_text]') WHERE id = [note_id]")
+		var/datum/db_query/query_update_note = SSdbcore.NewQuery("UPDATE [format_table_name("notes")] SET secret = NOT secret, last_editor = '[sql_ckey]', edits = CONCAT(IFNULL(edits,''),'[edit_text]') WHERE id = [note_id]")
 		if(!query_update_note.Execute())
 			var/err = query_update_note.ErrorMsg()
 			log_game("SQL ERROR toggling note secrecy. Error : \[[err]\]\n")
@@ -155,7 +155,7 @@
 		output = navbar
 	if(target_ckey)
 		var/target_sql_ckey = sanitizeSQL(target_ckey)
-		var/DBQuery/query_get_notes = dbcon.NewQuery("SELECT secret, timestamp, notetext, adminckey, last_editor, server, id FROM [format_table_name("notes")] WHERE ckey = '[target_sql_ckey]' ORDER BY timestamp")
+		var/datum/db_query/query_get_notes = SSdbcore.NewQuery("SELECT secret, timestamp, notetext, adminckey, last_editor, server, id FROM [format_table_name("notes")] WHERE ckey = '[target_sql_ckey]' ORDER BY timestamp")
 		if(!query_get_notes.Execute())
 			var/err = query_get_notes.ErrorMsg()
 			log_game("SQL ERROR obtaining secret, timestamp, notetext, adminckey, last_editor, server, id from notes table. Error : \[[err]\]\n")
@@ -197,7 +197,7 @@
 				search = "^\[^\[:alpha:\]\]"
 			else
 				search = "^[index]"
-		var/DBQuery/query_list_notes = dbcon.NewQuery("SELECT DISTINCT ckey FROM [format_table_name("notes")] WHERE ckey REGEXP '[search]' ORDER BY ckey")
+		var/datum/db_query/query_list_notes = SSdbcore.NewQuery("SELECT DISTINCT ckey FROM [format_table_name("notes")] WHERE ckey REGEXP '[search]' ORDER BY ckey")
 		if(!query_list_notes.Execute())
 			var/err = query_list_notes.ErrorMsg()
 			log_game("SQL ERROR obtaining ckey from notes table. Error : \[[err]\]\n")
@@ -229,7 +229,7 @@
 		var/timestamp = note.group[1]
 		notetext = note.group[2]
 		var/adminckey = note.group[3]
-		var/DBQuery/query_convert_time = dbcon.NewQuery("SELECT ADDTIME(STR_TO_DATE('[timestamp]','%d-%b-%Y'), '0')")
+		var/datum/db_query/query_convert_time = SSdbcore.NewQuery("SELECT ADDTIME(STR_TO_DATE('[timestamp]','%d-%b-%Y'), '0')")
 		if(!query_convert_time.Execute())
 			var/err = query_convert_time.ErrorMsg()
 			log_game("SQL ERROR converting timestamp. Error : \[[err]\]\n")

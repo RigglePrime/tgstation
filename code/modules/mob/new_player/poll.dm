@@ -3,10 +3,10 @@
 	var/optiontext
 
 /mob/new_player/proc/handle_player_polling()
-	if(!dbcon.IsConnected())
+	if(!SSdbcore.IsConnected())
 		usr << "<span class='danger'>Failed to establish database connection.</span>"
 		return
-	var/DBQuery/query_get_poll = dbcon.NewQuery("SELECT id, question FROM [format_table_name("poll_question")] WHERE [(client.holder ? "" : "adminonly = false AND")] Now() BETWEEN starttime AND endtime")
+	var/datum/db_query/query_get_poll = SSdbcore.NewQuery("SELECT id, question FROM [format_table_name("poll_question")] WHERE [(client.holder ? "" : "adminonly = false AND")] Now() BETWEEN starttime AND endtime")
 	if(!query_get_poll.Execute())
 		var/err = query_get_poll.ErrorMsg()
 		log_game("SQL ERROR obtaining id, question from poll_question table. Error : \[[err]\]\n")
@@ -27,7 +27,7 @@
 	if(!establish_db_connection())
 		usr << "<span class='danger'>Failed to establish database connection.</span>"
 		return
-	var/DBQuery/select_query = dbcon.NewQuery("SELECT starttime, endtime, question, polltype, multiplechoiceoptions FROM [format_table_name("poll_question")] WHERE id = [pollid]")
+	var/datum/db_query/select_query = SSdbcore.NewQuery("SELECT starttime, endtime, question, polltype, multiplechoiceoptions FROM [format_table_name("poll_question")] WHERE id = [pollid]")
 	if(!select_query.Execute())
 		var/err = select_query.ErrorMsg()
 		log_game("SQL ERROR obtaining starttime, endtime, question, polltype, multiplechoiceoptions from poll_question table. Error : \[[err]\]\n")
@@ -45,7 +45,7 @@
 		multiplechoiceoptions = text2num(select_query.item[5])
 	switch(polltype)
 		if(POLLTYPE_OPTION)
-			var/DBQuery/voted_query = dbcon.NewQuery("SELECT optionid FROM [format_table_name("poll_vote")] WHERE pollid = [pollid] AND ckey = '[ckey]'")
+			var/datum/db_query/voted_query = SSdbcore.NewQuery("SELECT optionid FROM [format_table_name("poll_vote")] WHERE pollid = [pollid] AND ckey = '[ckey]'")
 			if(!voted_query.Execute())
 				var/err = voted_query.ErrorMsg()
 				log_game("SQL ERROR obtaining optionid from poll_vote table. Error : \[[err]\]\n")
@@ -54,7 +54,7 @@
 			if(voted_query.NextRow())
 				votedoptionid = text2num(voted_query.item[1])
 			var/list/datum/polloption/options = list()
-			var/DBQuery/options_query = dbcon.NewQuery("SELECT id, text FROM [format_table_name("poll_option")] WHERE pollid = [pollid]")
+			var/datum/db_query/options_query = SSdbcore.NewQuery("SELECT id, text FROM [format_table_name("poll_option")] WHERE pollid = [pollid]")
 			if(!options_query.Execute())
 				var/err = options_query.ErrorMsg()
 				log_game("SQL ERROR obtaining id, text from poll_option table. Error : \[[err]\]\n")
@@ -90,7 +90,7 @@
 			src << browse(null ,"window=playerpolllist")
 			src << browse(output,"window=playerpoll;size=500x250")
 		if(POLLTYPE_TEXT)
-			var/DBQuery/voted_query = dbcon.NewQuery("SELECT replytext FROM [format_table_name("poll_textreply")] WHERE pollid = [pollid] AND ckey = '[ckey]'")
+			var/datum/db_query/voted_query = SSdbcore.NewQuery("SELECT replytext FROM [format_table_name("poll_textreply")] WHERE pollid = [pollid] AND ckey = '[ckey]'")
 			if(!voted_query.Execute())
 				var/err = voted_query.ErrorMsg()
 				log_game("SQL ERROR obtaining replytext from poll_textreply table. Error : \[[err]\]\n")
@@ -121,7 +121,7 @@
 			src << browse(null ,"window=playerpolllist")
 			src << browse(output,"window=playerpoll;size=500x500")
 		if(POLLTYPE_RATING)
-			var/DBQuery/voted_query = dbcon.NewQuery("SELECT o.text, v.rating FROM [format_table_name("poll_option")] o, [format_table_name("poll_vote")] v WHERE o.pollid = [pollid] AND v.ckey = '[ckey]' AND o.id = v.optionid")
+			var/datum/db_query/voted_query = SSdbcore.NewQuery("SELECT o.text, v.rating FROM [format_table_name("poll_option")] o, [format_table_name("poll_vote")] v WHERE o.pollid = [pollid] AND v.ckey = '[ckey]' AND o.id = v.optionid")
 			if(!voted_query.Execute())
 				var/err = voted_query.ErrorMsg()
 				log_game("SQL ERROR obtaining o.text, v.rating from poll_option and poll_vote tables. Error : \[[err]\]\n")
@@ -141,7 +141,7 @@
 				output += "<input type='hidden' name='votetype' value=[POLLTYPE_RATING]>"
 				var/minid = 999999
 				var/maxid = 0
-				var/DBQuery/option_query = dbcon.NewQuery("SELECT id, text, minval, maxval, descmin, descmid, descmax FROM [format_table_name("poll_option")] WHERE pollid = [pollid]")
+				var/datum/db_query/option_query = SSdbcore.NewQuery("SELECT id, text, minval, maxval, descmin, descmid, descmax FROM [format_table_name("poll_option")] WHERE pollid = [pollid]")
 				if(!option_query.Execute())
 					var/err = option_query.ErrorMsg()
 					log_game("SQL ERROR obtaining id, text, minval, maxval, descmin, descmid, descmax from poll_option table. Error : \[[err]\]\n")
@@ -177,7 +177,7 @@
 			src << browse(null ,"window=playerpolllist")
 			src << browse(output,"window=playerpoll;size=500x500")
 		if(POLLTYPE_MULTI)
-			var/DBQuery/voted_query = dbcon.NewQuery("SELECT optionid FROM [format_table_name("poll_vote")] WHERE pollid = [pollid] AND ckey = '[ckey]'")
+			var/datum/db_query/voted_query = SSdbcore.NewQuery("SELECT optionid FROM [format_table_name("poll_vote")] WHERE pollid = [pollid] AND ckey = '[ckey]'")
 			if(!voted_query.Execute())
 				var/err = voted_query.ErrorMsg()
 				log_game("SQL ERROR obtaining optionid from poll_vote table. Error : \[[err]\]\n")
@@ -188,7 +188,7 @@
 			var/list/datum/polloption/options = list()
 			var/maxoptionid = 0
 			var/minoptionid = 0
-			var/DBQuery/options_query = dbcon.NewQuery("SELECT id, text FROM [format_table_name("poll_option")] WHERE pollid = [pollid]")
+			var/datum/db_query/options_query = SSdbcore.NewQuery("SELECT id, text FROM [format_table_name("poll_option")] WHERE pollid = [pollid]")
 			if(!options_query.Execute())
 				var/err = options_query.ErrorMsg()
 				log_game("SQL ERROR obtaining id, text from poll_option table. Error : \[[err]\]\n")
@@ -232,7 +232,7 @@
 			var/datum/asset/irv_assets = get_asset_datum(/datum/asset/simple/IRV)
 			irv_assets.send(src)
 
-			var/DBQuery/voted_query = dbcon.NewQuery("SELECT optionid FROM [format_table_name("poll_vote")] WHERE pollid = [pollid] AND ckey = '[ckey]'")
+			var/datum/db_query/voted_query = SSdbcore.NewQuery("SELECT optionid FROM [format_table_name("poll_vote")] WHERE pollid = [pollid] AND ckey = '[ckey]'")
 			if(!voted_query.Execute())
 				var/err = voted_query.ErrorMsg()
 				log_game("SQL ERROR obtaining optionid from poll_vote table. Error : \[[err]\]\n")
@@ -244,7 +244,7 @@
 
 			var/list/datum/polloption/options = list()
 
-			var/DBQuery/options_query = dbcon.NewQuery("SELECT id, text FROM [format_table_name("poll_option")] WHERE pollid = [pollid]")
+			var/datum/db_query/options_query = SSdbcore.NewQuery("SELECT id, text FROM [format_table_name("poll_option")] WHERE pollid = [pollid]")
 			if(!options_query.Execute())
 				var/err = options_query.ErrorMsg()
 				log_game("SQL ERROR obtaining id, text from poll_option table. Error : \[[err]\]\n")
@@ -352,7 +352,7 @@
 	if (!establish_db_connection())
 		usr << "<span class='danger'>Failed to establish database connection.</span>"
 		return
-	var/DBQuery/query_hasvoted = dbcon.NewQuery("SELECT id FROM `[format_table_name(table)]` WHERE pollid = [pollid] AND ckey = '[ckey]'")
+	var/datum/db_query/query_hasvoted = SSdbcore.NewQuery("SELECT id FROM `[format_table_name(table)]` WHERE pollid = [pollid] AND ckey = '[ckey]'")
 	if(!query_hasvoted.Execute())
 		var/err = query_hasvoted.ErrorMsg()
 		log_game("SQL ERROR obtaining id from [table] table. Error : \[[err]\]\n")
@@ -386,7 +386,7 @@
 	if (!pollid || pollid < 0)
 		return 0
 	//validate the poll is actually the right type of poll and its still active
-	var/DBQuery/select_query = dbcon.NewQuery({"
+	var/datum/db_query/select_query = SSdbcore.NewQuery({"
 		SELECT id
 		FROM [format_table_name("poll_question")]
 		WHERE
@@ -431,7 +431,7 @@
 		return 0
 
 	//lets collect the options
-	var/DBQuery/options_query = dbcon.NewQuery("SELECT id FROM [format_table_name("poll_option")] WHERE pollid = [pollid]")
+	var/datum/db_query/options_query = SSdbcore.NewQuery("SELECT id FROM [format_table_name("poll_option")] WHERE pollid = [pollid]")
 	if (!options_query.Execute())
 		var/err = options_query.ErrorMsg()
 		log_game("SQL ERROR obtaining id from poll_option table. Error : \[[err]\]\n")
@@ -464,14 +464,14 @@
 		sqlrowlist += "(Now(), [pollid], [vote], '[sanitizeSQL(ckey)]', '[sanitizeSQL(address)]', '[sanitizeSQL(rank)]')"
 
 	//now lets delete their old votes (if any)
-	var/DBQuery/voted_query = dbcon.NewQuery("DELETE FROM [format_table_name("poll_vote")] WHERE pollid = [pollid] AND ckey = '[ckey]'")
+	var/datum/db_query/voted_query = SSdbcore.NewQuery("DELETE FROM [format_table_name("poll_vote")] WHERE pollid = [pollid] AND ckey = '[ckey]'")
 	if (!voted_query.Execute())
 		var/err = voted_query.ErrorMsg()
 		log_game("SQL ERROR clearing out old votes. Error : \[[err]\]\n")
 		return 0
 
 	//now to add the new ones.
-	var/DBQuery/query_insert = dbcon.NewQuery("INSERT INTO [format_table_name("poll_vote")] (datetime, pollid, optionid, ckey, ip, adminrank) VALUES [sqlrowlist]")
+	var/datum/db_query/query_insert = SSdbcore.NewQuery("INSERT INTO [format_table_name("poll_vote")] (datetime, pollid, optionid, ckey, ip, adminrank) VALUES [sqlrowlist]")
 	if(!query_insert.Execute())
 		var/err = query_insert.ErrorMsg()
 		log_game("SQL ERROR adding vote to table. Error : \[[err]\]\n")
@@ -495,7 +495,7 @@
 	var/adminrank = poll_check_voted(pollid)
 	if(!adminrank)
 		return
-	var/DBQuery/query_insert = dbcon.NewQuery("INSERT INTO [format_table_name("poll_vote")] (datetime, pollid, optionid, ckey, ip, adminrank) VALUES (Now(), [pollid], [optionid], '[ckey]', '[client.address]', '[adminrank]')")
+	var/datum/db_query/query_insert = SSdbcore.NewQuery("INSERT INTO [format_table_name("poll_vote")] (datetime, pollid, optionid, ckey, ip, adminrank) VALUES (Now(), [pollid], [optionid], '[ckey]', '[client.address]', '[adminrank]')")
 	if(!query_insert.Execute())
 		var/err = query_insert.ErrorMsg()
 		log_game("SQL ERROR adding vote to table. Error : \[[err]\]\n")
@@ -524,7 +524,7 @@
 	if(!(length(replytext) > 0) || !(length(replytext) <= 8000))
 		usr << "The text you entered was invalid or too long. Please correct the text and submit again."
 		return
-	var/DBQuery/query_insert = dbcon.NewQuery("INSERT INTO [format_table_name("poll_textreply")] (datetime ,pollid ,ckey ,ip ,replytext ,adminrank) VALUES (Now(), [pollid], '[ckey]', '[client.address]', '[replytext]', '[adminrank]')")
+	var/datum/db_query/query_insert = SSdbcore.NewQuery("INSERT INTO [format_table_name("poll_textreply")] (datetime ,pollid ,ckey ,ip ,replytext ,adminrank) VALUES (Now(), [pollid], '[ckey]', '[client.address]', '[replytext]', '[adminrank]')")
 	if(!query_insert.Execute())
 		var/err = query_insert.ErrorMsg()
 		log_game("SQL ERROR adding text reply to table. Error : \[[err]\]\n")
@@ -543,7 +543,7 @@
 	//validate the poll
 	if (!vote_valid_check(pollid, client.holder, POLLTYPE_RATING))
 		return 0
-	var/DBQuery/query_hasvoted = dbcon.NewQuery("SELECT id FROM [format_table_name("poll_vote")] WHERE optionid = [optionid] AND ckey = '[ckey]'")
+	var/datum/db_query/query_hasvoted = SSdbcore.NewQuery("SELECT id FROM [format_table_name("poll_vote")] WHERE optionid = [optionid] AND ckey = '[ckey]'")
 	if(!query_hasvoted.Execute())
 		var/err = query_hasvoted.ErrorMsg()
 		log_game("SQL ERROR obtaining id from poll_vote table. Error : \[[err]\]\n")
@@ -554,7 +554,7 @@
 	var/adminrank = "Player"
 	if(client.holder)
 		adminrank = client.holder.rank
-	var/DBQuery/query_insert = dbcon.NewQuery("INSERT INTO [format_table_name("poll_vote")] (datetime ,pollid ,optionid ,ckey ,ip ,adminrank, rating) VALUES (Now(), [pollid], [optionid], '[ckey]', '[client.address]', '[adminrank]', [(isnull(rating)) ? "null" : rating])")
+	var/datum/db_query/query_insert = SSdbcore.NewQuery("INSERT INTO [format_table_name("poll_vote")] (datetime ,pollid ,optionid ,ckey ,ip ,adminrank, rating) VALUES (Now(), [pollid], [optionid], '[ckey]', '[client.address]', '[adminrank]', [(isnull(rating)) ? "null" : rating])")
 	if(!query_insert.Execute())
 		var/err = query_insert.ErrorMsg()
 		log_game("SQL ERROR adding vote to table. Error : \[[err]\]\n")
@@ -573,7 +573,7 @@
 	//validate the poll
 	if (!vote_valid_check(pollid, client.holder, POLLTYPE_MULTI))
 		return 0
-	var/DBQuery/query_get_choicelen = dbcon.NewQuery("SELECT multiplechoiceoptions FROM [format_table_name("poll_question")] WHERE id = [pollid]")
+	var/datum/db_query/query_get_choicelen = SSdbcore.NewQuery("SELECT multiplechoiceoptions FROM [format_table_name("poll_question")] WHERE id = [pollid]")
 	if(!query_get_choicelen.Execute())
 		var/err = query_get_choicelen.ErrorMsg()
 		log_game("SQL ERROR obtaining multiplechoiceoptions from poll_question table. Error : \[[err]\]\n")
@@ -581,7 +581,7 @@
 	var/i
 	if(query_get_choicelen.NextRow())
 		i = text2num(query_get_choicelen.item[1])
-	var/DBQuery/query_hasvoted = dbcon.NewQuery("SELECT id FROM [format_table_name("poll_vote")] WHERE pollid = [pollid] AND ckey = '[ckey]'")
+	var/datum/db_query/query_hasvoted = SSdbcore.NewQuery("SELECT id FROM [format_table_name("poll_vote")] WHERE pollid = [pollid] AND ckey = '[ckey]'")
 	if(!query_hasvoted.Execute())
 		var/err = query_hasvoted.ErrorMsg()
 		log_game("SQL ERROR obtaining id from poll_vote table. Error : \[[err]\]\n")
@@ -596,7 +596,7 @@
 	var/adminrank = "Player"
 	if(client.holder)
 		adminrank = client.holder.rank
-	var/DBQuery/query_insert = dbcon.NewQuery("INSERT INTO [format_table_name("poll_vote")] (datetime, pollid, optionid, ckey, ip, adminrank) VALUES (Now(), [pollid], [optionid], '[ckey]', '[client.address]', '[adminrank]')")
+	var/datum/db_query/query_insert = SSdbcore.NewQuery("INSERT INTO [format_table_name("poll_vote")] (datetime, pollid, optionid, ckey, ip, adminrank) VALUES (Now(), [pollid], [optionid], '[ckey]', '[client.address]', '[adminrank]')")
 	if(!query_insert.Execute())
 		var/err = query_insert.ErrorMsg()
 		log_game("SQL ERROR adding vote to table. Error : \[[err]\]\n")

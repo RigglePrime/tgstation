@@ -31,120 +31,176 @@
 #define BLOB		14
 // TODO: Investigate more recent type additions and see if I can handle them. - Nadrew
 
+#define FAILED_DB_CONNECTION_CUTOFF 5
 
-// Deprecated! See global.dm for new configuration vars
-/*
-var/DB_SERVER = "" // This is the location of your MySQL server (localhost is USUALLY fine)
-var/DB_PORT = 3306 // This is the port your MySQL server is running on (3306 is the default)
-*/
+SUBSYSTEM_DEF(dbcore)
+	name = "Database"
+	flags = SS_TICKER
+	wait = 10
+	init_order = 95
+	priority = 16
 
-DBConnection
-	var/_db_con // This variable contains a reference to the actual database connection.
-	var/dbi // This variable is a string containing the DBI MySQL requires.
-	var/user // This variable contains the username data.
-	var/password // This variable contains the password data.
-	var/default_cursor // This contains the default database cursor data.
-		//
-	var/server = ""
-	var/port = 3306
+	var/initialized = FALSE
+	var/dbi
+	var/sqladdress = "localhost"
+	var/sqlport = "3306"
+	var/sqlfdbkdb = "test"
+	var/sqlfdbklogin = "root"
+	var/sqlfdbkpass = ""
+	var/sqlfdbktableprefix = "erro_"
+	var/default_cursor = Default_Cursor
+	var/_db_con = null
 
-DBConnection/New(dbi_handler,username,password_handler,cursor_handler)
-	src.dbi = dbi_handler
-	src.user = username
-	src.password = password_handler
-	src.default_cursor = cursor_handler
-	_db_con = _dm_db_new_con()
+	var/failed_db_connections = 0
 
-DBConnection/proc/Connect(dbi_handler=src.dbi,user_handler=src.user,password_handler=src.password,cursor_handler)
+/datum/subsystem/dbcore/Initialize(start_timeofday)
+	. = ..()
+	if(!config.sql_enabled)
+		can_fire = 0
+		return
+	dbi = "dbi:mysql:[sqlfdbkdb]:[sqladdress]:[sqlport]"
+	Connect()
+	initialized = TRUE
+
+/datum/subsystem/dbcore/can_vv_get(var_name)
+	return FALSE
+
+/datum/subsystem/dbcore/vv_edit_var(var_name, var_value)
+	return FALSE
+
+/datum/subsystem/dbcore/CanProcCall(procname)
+	return FALSE
+
+/datum/subsystem/dbcore/proc/Connect(dbi_handler=src.dbi, user_handler=src.sqlfdbklogin, password_handler=src.sqlfdbkpass, cursor_handler=Default_Cursor)
+	if(failed_db_connections >= FAILED_DB_CONNECTION_CUTOFF)	//If it failed to establish a connection more than 5 times in a row, don't bother attempting to connect anymore.
+		return FALSE
+	if(!config.sql_enabled)
+		return FALSE
+	if(IsConnected())
+		return TRUE
+	default_cursor = cursor_handler
+	_dm_db_connect(_db_con, dbi_handler, user_handler, password_handler, default_cursor, null)
+	if(IsConnected())
+		failed_db_connections = 0
+		return TRUE
+	var/message = "DB failed to connect! Failed connections: [++failed_db_connections]. SQL error: " + SSdbcore.ErrorMsg()
+	message_admins(message)
+	log_admin(message)
+	return FALSE
+
+/datum/subsystem/dbcore/proc/Disconnect()
+	return _dm_db_close(_db_con)
+
+/datum/subsystem/dbcore/proc/Quote(str)
+	return _dm_db_quote(_db_con,str)
+
+/datum/subsystem/dbcore/proc/ErrorMsg()
+	return _dm_db_error_msg(_db_con)
+
+/datum/subsystem/dbcore/proc/SelectDB(database_name,dbi)
+	if(IsConnected())
+		Disconnect()
+	return Connect("[dbi?"[dbi]":"dbi:mysql:[database_name]:[sqladdress]:[sqlport]"]", sqlfdbklogin, sqlfdbkpass)
+
+/datum/subsystem/dbcore/proc/NewQuery(sql_query, cursor_handler=src.default_cursor)
+	return new /datum/db_query(sql_query, _db_con, cursor_handler)
+
+/datum/subsystem/dbcore/proc/IsConnected()
 	if(!config.sql_enabled)
 		return 0
-	if(!src) return 0
-	cursor_handler = src.default_cursor
-	if(!cursor_handler) cursor_handler = Default_Cursor
-	return _dm_db_connect(_db_con,dbi_handler,user_handler,password_handler,cursor_handler,null)
-
-DBConnection/proc/Disconnect() return _dm_db_close(_db_con)
-
-DBConnection/proc/IsConnected()
-	if(!config.sql_enabled) return 0
 	var/success = _dm_db_is_connected(_db_con)
 	return success
 
-DBConnection/proc/Quote(str) return _dm_db_quote(_db_con,str)
+/datum/subsystem/dbcore/Recover()
+	dbi = SSdbcore.dbi
+	sqladdress = SSdbcore.sqladdress
+	sqlport = SSdbcore.sqlport
+	sqlfdbkdb = SSdbcore.sqlfdbkdb
+	sqlfdbklogin = SSdbcore.sqlfdbklogin
+	sqlfdbkpass = SSdbcore.sqlfdbkpass
+	sqlfdbktableprefix = SSdbcore.sqlfdbktableprefix
+	_db_con = SSdbcore._db_con
 
-DBConnection/proc/ErrorMsg() return _dm_db_error_msg(_db_con)
-DBConnection/proc/SelectDB(database_name,dbi)
-	if(IsConnected()) Disconnect()
-	//return Connect("[dbi?"[dbi]":"dbi:mysql:[database_name]:[DB_SERVER]:[DB_PORT]"]",user,password)
-	return Connect("[dbi?"[dbi]":"dbi:mysql:[database_name]:[sqladdress]:[sqlport]"]",user,password)
-DBConnection/proc/NewQuery(sql_query,cursor_handler=src.default_cursor) return new/DBQuery(sql_query,src,cursor_handler)
-
-
-DBQuery/New(sql_query,DBConnection/connection_handler,cursor_handler)
-	if(sql_query) src.sql = sql_query
-	if(connection_handler) src.db_connection = connection_handler
-	if(cursor_handler) src.default_cursor = cursor_handler
-	_db_query = _dm_db_new_query()
-	return ..()
-
-
-DBQuery
+/datum/db_query
 	var/sql // The sql query being executed.
 	var/default_cursor
 	var/list/columns //list of DB Columns populated by Columns()
 	var/list/conversions
 	var/list/item[0]  //list of data values populated by NextRow()
 
-	var/DBConnection/db_connection
+	var/db_connection
 	var/_db_query
 
-DBQuery/proc/Connect(DBConnection/connection_handler) src.db_connection = connection_handler
+#undef FAILED_DB_CONNECTION_CUTOFF
 
-DBQuery/proc/Execute(sql_query=src.sql,cursor_handler=default_cursor)
+/datum/db_query/New(sql_query, connection_handler, cursor_handler)
+	if(sql_query)
+		src.sql = sql_query
+	if(connection_handler)
+		src.db_connection = connection_handler
+	if(cursor_handler)
+		src.default_cursor = cursor_handler
+	_db_query = _dm_db_new_query()
+	return ..()
+
+/datum/db_query/vv_edit_var(var_name, var_value)
+	return FALSE
+
+/datum/db_query/CanProcCall(procname)
+	return FALSE
+
+/datum/db_query/proc/Connect()
+	SSdbcore.Connect()
+
+/datum/db_query/proc/Execute(sql_query=src.sql, cursor_handler=default_cursor)
 	Close()
-	return _dm_db_execute(_db_query,sql_query,db_connection._db_con,cursor_handler,null)
+	return _dm_db_execute(_db_query,sql_query,db_connection,cursor_handler,null)
 
-DBQuery/proc/NextRow() return _dm_db_next_row(_db_query,item,conversions)
+/datum/db_query/proc/NextRow()
+	return _dm_db_next_row(_db_query,item,conversions)
 
-DBQuery/proc/RowsAffected() return _dm_db_rows_affected(_db_query)
+/datum/db_query/proc/RowsAffected()
+	return _dm_db_rows_affected(_db_query)
 
-DBQuery/proc/RowCount() return _dm_db_row_count(_db_query)
+/datum/db_query/proc/RowCount()
+	return _dm_db_row_count(_db_query)
 
-DBQuery/proc/ErrorMsg() return _dm_db_error_msg(_db_query)
+/datum/db_query/proc/ErrorMsg()
+	return _dm_db_error_msg(_db_query)
 
-DBQuery/proc/Columns()
+/datum/db_query/proc/Columns()
 	if(!columns)
-		columns = _dm_db_columns(_db_query,/DBColumn)
+		columns = _dm_db_columns(_db_query,/datum/db_column)
 	return columns
 
-DBQuery/proc/GetRowData()
+/datum/db_query/proc/GetRowData()
 	var/list/columns = Columns()
 	var/list/results
 	if(columns.len)
 		results = list()
 		for(var/C in columns)
-			results+=C
-			var/DBColumn/cur_col = columns[C]
+			results += C
+			var/datum/db_column/cur_col = columns[C]
 			results[C] = src.item[(cur_col.position+1)]
 	return results
 
-DBQuery/proc/Close()
+/datum/db_query/proc/Close()
 	item.len = 0
 	columns = null
 	conversions = null
 	return _dm_db_close(_db_query)
 
-DBQuery/proc/Quote(str)
-	return db_connection.Quote(str)
+/datum/db_query/proc/Quote(str)
+	return SSdbcore.Quote(str)
 
-DBQuery/proc/SetConversion(column,conversion)
+/datum/db_query/proc/SetConversion(column, conversion)
 	if(istext(column)) column = columns.Find(column)
 	if(!conversions) conversions = new/list(column)
 	else if(conversions.len < column) conversions.len = column
 	conversions[column] = conversion
 
 
-DBColumn
+/datum/db_column
 	var/name
 	var/table
 	var/position //1-based index into item data
@@ -153,7 +209,7 @@ DBColumn
 	var/length
 	var/max_length
 
-DBColumn/New(name_handler,table_handler,position_handler,type_handler,flag_handler,length_handler,max_length_handler)
+/datum/db_column/New(name_handler, table_handler, position_handler, type_handler, flag_handler, length_handler, max_length_handler)
 	src.name = name_handler
 	src.table = table_handler
 	src.position = position_handler
@@ -163,8 +219,13 @@ DBColumn/New(name_handler,table_handler,position_handler,type_handler,flag_handl
 	src.max_length = max_length_handler
 	return ..()
 
+/datum/db_column/vv_edit_var(var_name, var_value)
+	return FALSE
 
-DBColumn/proc/SqlTypeName(type_handler=src.sql_type)
+/datum/db_column/CanProcCall(procname)
+	return FALSE
+
+/datum/db_column/proc/SqlTypeName(type_handler=src.sql_type)
 	switch(type_handler)
 		if(TINYINT) return "TINYINT"
 		if(SMALLINT) return "SMALLINT"

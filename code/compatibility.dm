@@ -109,6 +109,17 @@
 #define span_boldannounce(str) ("<span class='boldannounce'>" + str + "</span>")
 
 
+///////////////
+// SUBSYSTEM //
+///////////////
+
+#define SUBSYSTEM_DEF(X) GLOBAL_REAL(SS##X, /datum/subsystem/##X);\
+/datum/subsystem/##X/New(){\
+	NEW_SS_GLOBAL(SS##X);\
+}\
+/datum/subsystem/##X
+
+
 /////////////
 // LOGGING //
 /////////////

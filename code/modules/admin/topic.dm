@@ -1095,7 +1095,7 @@
 
 	else if(href_list["noteedits"])
 		var/note_id = sanitizeSQL("[href_list["noteedits"]]")
-		var/DBQuery/query_noteedits = dbcon.NewQuery("SELECT edits FROM [format_table_name("notes")] WHERE id = '[note_id]'")
+		var/datum/db_query/query_noteedits = SSdbcore.NewQuery("SELECT edits FROM [format_table_name("notes")] WHERE id = '[note_id]'")
 		if(!query_noteedits.Execute())
 			var/err = query_noteedits.ErrorMsg()
 			log_game("SQL ERROR obtaining edits from notes table. Error : \[[err]\]\n")
@@ -1204,7 +1204,7 @@
 
 	else if(href_list["watcheditlog"])
 		var/target_ckey = sanitizeSQL("[href_list["watcheditlog"]]")
-		var/DBQuery/query_watchedits = dbcon.NewQuery("SELECT edits FROM [format_table_name("watch")] WHERE ckey = '[target_ckey]'")
+		var/datum/db_query/query_watchedits = SSdbcore.NewQuery("SELECT edits FROM [format_table_name("watch")] WHERE ckey = '[target_ckey]'")
 		if(!query_watchedits.Execute())
 			var/err = query_watchedits.ErrorMsg()
 			log_game("SQL ERROR obtaining edits from watch table. Error : \[[err]\]\n")
@@ -2190,7 +2190,7 @@
 
 	else if(href_list["memoeditlist"])
 		var/sql_key = sanitizeSQL("[href_list["memoeditlist"]]")
-		var/DBQuery/query_memoedits = dbcon.NewQuery("SELECT edits FROM [format_table_name("memo")] WHERE (ckey = '[sql_key]')")
+		var/datum/db_query/query_memoedits = SSdbcore.NewQuery("SELECT edits FROM [format_table_name("memo")] WHERE (ckey = '[sql_key]')")
 		if(!query_memoedits.Execute())
 			var/err = query_memoedits.ErrorMsg()
 			log_game("SQL ERROR obtaining edits from memo table. Error : \[[err]\]\n")
