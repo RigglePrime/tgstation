@@ -153,3 +153,12 @@
 			to_chat(src, "Your edit was rejected by the object.")
 		return FALSE
 	return TRUE
+
+///////////////////
+// LIBRARY CALLS //
+///////////////////
+
+// 515 split call for external libraries into call_ext
+#if DM_VERSION < 515
+#define call_ext call
+#endif
