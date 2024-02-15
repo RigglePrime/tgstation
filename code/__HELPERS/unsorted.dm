@@ -1446,6 +1446,11 @@ GLOBAL_DATUM_INIT(dview_mob, /mob/dview, new)
 #else
 #define NAMEOF_STATIC(datum, X) (#X || ##datum.##X)
 #endif
+
+// 515 split call for external libraries into call_ext
+#if DM_VERSION < 515
+#define call_ext call
+#endif
 // End of Riggle's edit
 
 #define VARSET_LIST_CALLBACK(target, var_name, var_value) CALLBACK(GLOBAL_PROC, /proc/___callbackvarset, ##target, ##var_name, ##var_value)
