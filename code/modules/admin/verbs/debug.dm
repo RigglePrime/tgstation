@@ -110,7 +110,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 		usr << .
 	feedback_add_details("admin_verb","APC") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 
-/client/proc/callproc_datum(A as null|area|mob|obj|turf)
+/client/proc/callproc_datum(datum/A as null|area|mob|obj|turf)
 	set category = "Debug"
 	set name = "Atom ProcCall"
 	set waitfor = 0
