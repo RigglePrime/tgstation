@@ -458,6 +458,22 @@ var/next_external_rsc = 0
 		//Precache the client with all other assets slowly, so as to not block other browse() calls
 		getFilesSlow(src, SSasset.cache, register_asset = FALSE)
 
+// Riggle's edit
+		#if (PRELOAD_RSC == 0)
+		preload_vox()
+		#endif
+
+// Edit continues
+#if (PRELOAD_RSC == 0)
+/client/proc/preload_vox()
+	set waitfor = FALSE
+	sleep(1 MINUTES)
+	for (var/name in vox_sounds)
+		var/file = vox_sounds[name]
+		Export("##action=load_rsc", file)
+		stoplag()
+#endif
+// End of edit
 
 //Hook, override it to run code when dir changes
 //Like for /atoms, but clients are their own snowflake FUCK
