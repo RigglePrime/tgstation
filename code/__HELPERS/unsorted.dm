@@ -1439,20 +1439,6 @@ GLOBAL_DATUM_INIT(dview_mob, /mob/dview, new)
 //datum may be null, but it does need to be a typed var
 #define NAMEOF(datum, X) (#X || ##datum.##X)
 
-// Riggle's edit
-// 515 compat
-#if DM_VERSION >= 515
-#define NAMEOF_STATIC(datum, X) (nameof(type::##X))
-#else
-#define NAMEOF_STATIC(datum, X) (#X || ##datum.##X)
-#endif
-
-// 515 split call for external libraries into call_ext
-#if DM_VERSION < 515
-#define call_ext call
-#endif
-// End of Riggle's edit
-
 #define VARSET_LIST_CALLBACK(target, var_name, var_value) CALLBACK(GLOBAL_PROC, /proc/___callbackvarset, ##target, ##var_name, ##var_value)
 //dupe code because dm can't handle 3 level deep macros
 #define VARSET_CALLBACK(datum, var, var_value) CALLBACK(GLOBAL_PROC, /proc/___callbackvarset, ##datum, NAMEOF(##datum, ##var), ##var_value)

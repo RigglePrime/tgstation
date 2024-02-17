@@ -14,8 +14,8 @@
 		return COMPONENT_INCOMPATIBLE
 
 	orbiters = list()
-	orbiter_spy = CALLBACK(src, .proc/orbiter_move_react)
-	orbited_spy = CALLBACK(src, .proc/move_react)
+	orbiter_spy = CALLBACK(src, PROC_REF(orbiter_move_react))
+	orbited_spy = CALLBACK(src, PROC_REF(move_react))
 
 	var/atom/master = parent
 	master.orbiters = src

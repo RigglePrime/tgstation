@@ -111,7 +111,7 @@
 /obj/item/organ/cyberimp/brain/anti_stun/proc/initialize_callback()
 	if(CB)
 		return
-	CB = CALLBACK(src, .proc/on_signal)
+	CB = CALLBACK(src, PROC_REF(on_signal))
 
 /obj/item/organ/cyberimp/brain/anti_stun/Remove()
 	. = ..()
@@ -147,7 +147,7 @@
 	if(crit_fail || . & EMP_PROTECT_SELF)
 		return
 	crit_fail = TRUE
-	addtimer(CALLBACK(src, .proc/reboot), 90 / severity)
+	addtimer(CALLBACK(src, PROC_REF(reboot)), 90 / severity)
 
 /obj/item/organ/cyberimp/brain/anti_stun/proc/reboot()
 	crit_fail = FALSE

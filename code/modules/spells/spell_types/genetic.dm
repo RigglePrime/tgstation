@@ -28,7 +28,7 @@
 		for(var/A in traits)
 			target.add_trait(A, GENETICS_SPELL)
 		active_on += target
-		addtimer(CALLBACK(src, .proc/remove, target), duration)
+		addtimer(CALLBACK(src, PROC_REF(remove), target), duration)
 
 /obj/effect/proc_holder/spell/targeted/genetic/Destroy()
 	. = ..()

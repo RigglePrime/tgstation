@@ -66,7 +66,7 @@
 /datum/nanite_program/sensor/repeat/trigger()
 	if(!..())
 		return
-	addtimer(CALLBACK(src, .proc/send_code), delay)
+	addtimer(CALLBACK(src, PROC_REF(send_code)), delay)
 
 /datum/nanite_program/sensor/relay_repeat
 	name = "Relay Signal Repeater"
@@ -112,7 +112,7 @@
 /datum/nanite_program/sensor/relay_repeat/trigger()
 	if(!..())
 		return
-	addtimer(CALLBACK(src, .proc/send_code), delay)
+	addtimer(CALLBACK(src, PROC_REF(send_code)), delay)
 
 /datum/nanite_program/sensor/relay_repeat/send_code()
 	if(activated && relay_channel)

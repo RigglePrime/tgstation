@@ -218,7 +218,7 @@
 /obj/item/clothing/mask/fakemoustache/sticky/Initialize()
 	. = ..()
 	item_flags |= NODROP
-	addtimer(CALLBACK(src, .proc/unstick), unstick_time)
+	addtimer(CALLBACK(src, PROC_REF(unstick)), unstick_time)
 
 /obj/item/clothing/mask/fakemoustache/sticky/proc/unstick()
 	item_flags &= ~NODROP

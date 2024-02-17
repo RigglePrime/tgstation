@@ -80,7 +80,7 @@
 		var/regex/reg = regex("(\\b|\\A)[REGEX_QUOTE(word)]'?s*(\\b|\\Z)", "i")
 
 		if(findtext(raw_message, reg))
-			addtimer(CALLBACK(src, .proc/freak_out, null, word), 10) //to react AFTER the chat message
+			addtimer(CALLBACK(src, PROC_REF(freak_out), null, word), 10) //to react AFTER the chat message
 			message = reg.Replace(message, "<span class='phobia'>$1</span>")
 			break
 	return message

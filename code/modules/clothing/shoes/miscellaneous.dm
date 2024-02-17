@@ -235,7 +235,7 @@
 
 	var/atom/target = get_edge_target_turf(user, user.dir) //gets the user's direction
 
-	if (user.throw_at(target, jumpdistance, jumpspeed, spin = FALSE, diagonals_first = TRUE, callback = CALLBACK(src, .proc/hop_end)))
+	if (user.throw_at(target, jumpdistance, jumpspeed, spin = FALSE, diagonals_first = TRUE, callback = CALLBACK(src, PROC_REF(hop_end))))
 		jumping = TRUE
 		playsound(src, 'sound/effects/stealthoff.ogg', 50, 1, 1)
 		user.visible_message("<span class='warning'>[usr] dashes forward into the air!</span>")
@@ -321,13 +321,13 @@
 		return
 	active = TRUE
 	set_light(2, 3, rgb(rand(0,255),rand(0,255),rand(0,255)))
-	addtimer(CALLBACK(src, .proc/lightUp), 5)
+	addtimer(CALLBACK(src, PROC_REF(lightUp)), 5)
 
 /obj/item/clothing/shoes/kindleKicks/proc/lightUp(mob/user)
 	if(lightCycle < 15)
 		set_light(2, 3, rgb(rand(0,255),rand(0,255),rand(0,255)))
 		lightCycle += 1
-		addtimer(CALLBACK(src, .proc/lightUp), 5)
+		addtimer(CALLBACK(src, PROC_REF(lightUp)), 5)
 	else
 		set_light(0)
 		lightCycle = 0

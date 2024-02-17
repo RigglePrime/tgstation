@@ -42,5 +42,5 @@
 		particles_fired++
 		var/angle = rand(0,360)
 		var/obj/item/projectile/energy/nuclear_particle/P = new /obj/item/projectile/energy/nuclear_particle(src)
-		addtimer(CALLBACK(P, /obj/item/projectile.proc/fire, angle), particles_fired) //multiply particles fired * delay so the particles end up stagnated (once every decisecond)
+		addtimer(CALLBACK(P, TYPE_PROC_REF(/obj/item/projectile, fire), angle), particles_fired) //multiply particles fired * delay so the particles end up stagnated (once every decisecond)
 		particles_to_fire--

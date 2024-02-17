@@ -196,7 +196,7 @@
 		return message
 	if(findtext(message, codeword))
 		message = replacetext(message, codeword, "<span class='warning'>[codeword]</span>")
-		addtimer(CALLBACK(src, /datum/brain_trauma/severe/split_personality.proc/switch_personalities), 10)
+		addtimer(CALLBACK(src, TYPE_PROC_REF(/datum/brain_trauma/severe/split_personality, switch_personalities)), 10)
 	return message
 
 /datum/brain_trauma/severe/split_personality/brainwashing/on_say(message)

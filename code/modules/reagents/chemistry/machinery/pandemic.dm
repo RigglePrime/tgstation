@@ -217,7 +217,7 @@
 			B.reagents.add_reagent("blood", 20, data)
 			wait = TRUE
 			update_icon()
-			addtimer(CALLBACK(src, .proc/reset_replicator_cooldown), 50)
+			addtimer(CALLBACK(src, PROC_REF(reset_replicator_cooldown)), 50)
 			. = TRUE
 		if("create_vaccine_bottle")
 			var/id = params["index"]
@@ -227,7 +227,7 @@
 			B.reagents.add_reagent("vaccine", 15, list(id))
 			wait = TRUE
 			update_icon()
-			addtimer(CALLBACK(src, .proc/reset_replicator_cooldown), 200)
+			addtimer(CALLBACK(src, PROC_REF(reset_replicator_cooldown)), 200)
 			. = TRUE
 		if("symptom_details")
 			var/picked_symptom_index = text2num(params["picked_symptom"])

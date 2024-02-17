@@ -17,7 +17,7 @@
 			if(!istype(turfchangeCB))
 				. = COMPONENT_INCOMPATIBLE
 				CRASH("Redirect components must be given instanced callbacks, not proc paths.")
-		_signals[COMSIG_TURF_CHANGE] = CALLBACK(src, .proc/turf_change)
+		_signals[COMSIG_TURF_CHANGE] = CALLBACK(src, PROC_REF(turf_change))
 
 	signals = _signals
 

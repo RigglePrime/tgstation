@@ -3,14 +3,14 @@
 /datum/component/wearertargeting
 	var/list/valid_slots = list()
 	var/list/signals = list()
-	var/datum/callback/callback = CALLBACK(GLOBAL_PROC, .proc/pass)
+	var/datum/callback/callback = CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(pass))
 	var/mobtype = /mob/living
 
 /datum/component/wearertargeting/Initialize()
 	if(!isitem(parent))
 		return COMPONENT_INCOMPATIBLE
-	RegisterSignal(parent, COMSIG_ITEM_EQUIPPED, .proc/on_equip)
-	RegisterSignal(parent, COMSIG_ITEM_DROPPED, .proc/on_drop)
+	RegisterSignal(parent, COMSIG_ITEM_EQUIPPED, PROC_REF(on_equip))
+	RegisterSignal(parent, COMSIG_ITEM_DROPPED, PROC_REF(on_drop))
 
 /datum/component/wearertargeting/proc/on_equip(datum/source, mob/equipper, slot)
 	if((slot in valid_slots) && istype(equipper, mobtype))

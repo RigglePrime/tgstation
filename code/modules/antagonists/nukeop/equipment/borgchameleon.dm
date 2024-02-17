@@ -92,7 +92,7 @@
 	if (mobhook && mobhook.parent != user)
 		QDEL_NULL(mobhook)
 	if (!mobhook)
-		var/callback = CALLBACK(src, .proc/disrupt, user) // push user into the callback so that it's guaranteed to be the first arg
+		var/callback = CALLBACK(src, PROC_REF(disrupt), user) // push user into the callback so that it's guaranteed to be the first arg
 		mobhook = user.AddComponent(/datum/component/redirect, list( // list here all signals that should break the camouflage
 			COMSIG_PARENT_ATTACKBY = callback,
 			COMSIG_ATOM_ATTACK_HAND = callback,

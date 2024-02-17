@@ -35,7 +35,7 @@
 	. = ..()
 	class = class_
 	if(timer)
-		addtimer(CALLBACK(src, .proc/remove), timer)
+		addtimer(CALLBACK(src, PROC_REF(remove)), timer)
 		timed = TRUE
 
 /datum/mutation/human/proc/on_acquiring(mob/living/carbon/human/H)

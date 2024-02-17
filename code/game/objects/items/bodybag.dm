@@ -43,7 +43,7 @@
 	unfoldedbag_path = /obj/structure/closet/body_bag/bluespace
 	w_class = WEIGHT_CLASS_SMALL
 	item_flags = NO_MAT_REDEMPTION
-	var/static/datum/callback/canreach_blocking_callback = CALLBACK(GLOBAL_PROC, .proc/__bluespace_bodybag_canreach_block)
+	var/static/datum/callback/canreach_blocking_callback = CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(__bluespace_bodybag_canreach_block))
 
 /obj/item/bodybag/bluespace/Initialize()
 	. = ..()

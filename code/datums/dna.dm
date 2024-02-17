@@ -242,7 +242,7 @@
 				if(-INFINITY to 0)
 					message = "<span class='boldwarning'>You can feel your DNA exploding, we need to do something fast!</span>"
 		if(stability <= 0)
-			addtimer(CALLBACK(src, .proc/something_horrible), 600) //you've got 60 seconds to get your shit togheter
+			addtimer(CALLBACK(src, PROC_REF(something_horrible)), 600) //you've got 60 seconds to get your shit togheter
 		if(message)
 			to_chat(holder, message)
 

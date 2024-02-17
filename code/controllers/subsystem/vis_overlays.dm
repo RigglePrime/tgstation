@@ -10,7 +10,7 @@ SUBSYSTEM_DEF(vis_overlays)
 
 /datum/controller/subsystem/vis_overlays/Initialize()
 	vis_overlay_cache = list()
-	rotate_cb = CALLBACK(src, .proc/rotate_vis_overlay)
+	rotate_cb = CALLBACK(src, PROC_REF(rotate_vis_overlay))
 	return ..()
 
 /datum/controller/subsystem/vis_overlays/fire(resumed = FALSE)

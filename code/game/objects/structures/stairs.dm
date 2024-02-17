@@ -80,7 +80,7 @@
 /obj/structure/stairs/proc/build_signal_listener()
 	QDEL_NULL(multiz_signal_listener)
 	var/turf/open/openspace/T = get_step_multiz(get_turf(src), UP)
-	multiz_signal_listener = T.AddComponent(/datum/component/redirect, list(COMSIG_TURF_MULTIZ_NEW = CALLBACK(src, .proc/on_multiz_new)))
+	multiz_signal_listener = T.AddComponent(/datum/component/redirect, list(COMSIG_TURF_MULTIZ_NEW = CALLBACK(src, PROC_REF(on_multiz_new))))
 
 /obj/structure/stairs/proc/force_open_above()
 	var/turf/open/openspace/T = get_step_multiz(get_turf(src), UP)

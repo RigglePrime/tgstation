@@ -39,7 +39,7 @@
 	if(SSticker.HasRoundStarted())
 		SSblackbox.ReportDeath(src)
 	if(is_devil(src))
-		INVOKE_ASYNC(is_devil(src), /datum/antagonist/devil.proc/beginResurrectionCheck, src)
+		INVOKE_ASYNC(is_devil(src), TYPE_PROC_REF(/datum/antagonist/devil, beginResurrectionCheck), src)
 	if(is_hivemember(src))
 		remove_hivemember(src)
 	if(is_hivehost(src))

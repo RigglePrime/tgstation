@@ -28,7 +28,7 @@
 	. = ..()
 	START_PROCESSING(SSprocessing, src)
 	GLOB.poi_list += src
-	AddComponent(/datum/component/redirect, list(COMSIG_MOVABLE_POST_THROW = CALLBACK(src, .proc/move_gracefully)))
+	AddComponent(/datum/component/redirect, list(COMSIG_MOVABLE_POST_THROW = CALLBACK(src, PROC_REF(move_gracefully))))
 
 /obj/item/his_grace/Destroy()
 	STOP_PROCESSING(SSprocessing, src)
@@ -39,7 +39,7 @@
 
 /obj/item/his_grace/attack_self(mob/living/user)
 	if(!awakened)
-		INVOKE_ASYNC(src, .proc/awaken, user)
+		INVOKE_ASYNC(src, PROC_REF(awaken), user)
 
 /obj/item/his_grace/attack(mob/living/M, mob/user)
 	if(awakened && M.stat)

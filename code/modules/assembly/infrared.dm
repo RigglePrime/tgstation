@@ -25,7 +25,7 @@
 		ROTATION_ALTCLICK | ROTATION_CLOCKWISE | ROTATION_COUNTERCLOCKWISE | ROTATION_FLIP | ROTATION_VERBS,
 		null,
 		null,
-		CALLBACK(src,.proc/after_rotation)
+		CALLBACK(src, PROC_REF(after_rotation))
 		)
 
 /obj/item/assembly/infra/proc/after_rotation()
@@ -164,7 +164,7 @@
 
 /obj/item/assembly/infra/proc/switchListener(turf/newloc)
 	QDEL_NULL(listener)
-	listener = newloc.AddComponent(/datum/component/redirect, list(COMSIG_ATOM_EXITED = CALLBACK(src, .proc/check_exit)))
+	listener = newloc.AddComponent(/datum/component/redirect, list(COMSIG_ATOM_EXITED = CALLBACK(src, PROC_REF(check_exit))))
 
 /obj/item/assembly/infra/proc/check_exit(datum/source, atom/movable/offender)
 	if(QDELETED(src))

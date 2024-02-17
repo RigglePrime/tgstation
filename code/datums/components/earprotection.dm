@@ -5,7 +5,7 @@
 /datum/component/wearertargeting/earprotection/Initialize(_valid_slots)
 	. = ..()
 	valid_slots = _valid_slots
-	callback = CALLBACK(src, .proc/reducebang)
+	callback = CALLBACK(src, PROC_REF(reducebang))
 
 /datum/component/wearertargeting/earprotection/proc/reducebang(datum/source, list/reflist)
 	reflist[1]--
